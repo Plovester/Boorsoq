@@ -1,7 +1,10 @@
 import os
-import requests
+from flask import Flask, render_template, redirect, url_for, request
+from flask_bootstrap import Bootstrap5
 
-UNSPLASH_ACCESS_KEY = os.environ['UNSPLASH_ACCESS_KEY']
-UNSPLASH_SECRET_KEY = os.environ['UNSPLASH_SECRET_KEY']
+app = Flask(__name__)
+app.config['UNSPLASH_ACCESS_KEY'] = os.environ.get('UNSPLASH_ACCESS_KEY')
+app.config['UNSPLASH_SECRET_KEY'] = os.environ.get('UNSPLASH_SECRET_KEY')
+Bootstrap5(app)
 
 
