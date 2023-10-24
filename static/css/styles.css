@@ -1,0 +1,29 @@
+.header-img {
+    background-image: url("../assets/img/header-img.jpg");
+    background-size: 150%;
+    background-position: right 80% bottom 30%;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    font-size: 15px;
+}
+
+.slogan {
+    font-family: 'Cookie', cursive;
+    padding-bottom: 12vw;
+    color: #D44000;
+}
+
+.main-text-color {
+    color: #864000;
+}
+
+.selected-text-color {
+    color: #FF7A00;
+}
+
+::placeholder {
+  color: #FF7A00 !important;
+}

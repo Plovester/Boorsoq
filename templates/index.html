@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Boorsoq</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='/css/styles.css') }}" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+        <span class="logo fa-solid fa-cake-candles" style="color: #ff7a00;"></span>
+      </a>
+
+      <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="#" class="selected-text-color nav-link px-2">Home</a></li>
+        <li><a href="#" class="main-text-color nav-link px-2">Categories</a></li>
+        <li><a href="#" class="main-text-color nav-link px-2">Help</a></li>
+        <li><a href="#" class="main-text-color nav-link px-2">Contact</a></li>
+      </ul>
+
+      <div class="col-md-3 text-end">
+        <button type="button" class="btn btn-outline-warning me-2">Register</button>
+        <button type="button" class="main-text-color btn btn-warning">Sign in</button>
+      </div>
+    </header>
+</div>
+
+<div class="container">
+  <div class="header-img p-4 p-md-5 mb-4 rounded">
+    <div class="col-md-6 px-0">
+        <h1 class="slogan display-4 fst-italic">Have some more of these soft French rolls, and have a cup of tea</h1>
+        <div class="input-group mb-1">
+          <input type="search" class="selected-text-color form-control" placeholder="Search for products" aria-label="Search" aria-describedby="button-addon2">
+          <button class="btn btn-outline-warning" type="button" id="button-addon2"><i class="fa-solid fa-magnifying-glass" style="color: #ff7a00;"></i></button>
+        </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
