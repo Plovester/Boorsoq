@@ -1,3 +1,11 @@
+body {
+    color: #864000 !important;
+}
+
+input {
+    color: #864000 !important;
+}
+
 .header-img {
     background-image: url("../assets/img/header-img.jpg");
     background-size: 150%;
