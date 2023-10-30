@@ -25,7 +25,13 @@
                 </ul>
 
                 <div class="col-md-3 text-end">
+                    {% if not current_user.is_authenticated: %}
                     <a class="btn btn-outline-warning me-2" href="{{ url_for('register') }}">Register</a>
                     <a class="main-text-color btn btn-warning" href="{{ url_for('login') }}">Sign in</a>
+                    {% endif %}
+                    {% if current_user.is_authenticated: %}
+                    <span class="me-5">Hi {{current_user.name}}</span>
+                    <a class="main-text-color btn btn-warning" href="{{ url_for('logout') }}">Log out</a>
+                    {% endif %}
                 </div>
             </header>
