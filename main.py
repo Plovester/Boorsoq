@@ -1,6 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, flash
 # from flask_login import login_user, LoginManager, current_user, logout_user, login_required
+from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap5
+from werkzeug.security import generate_password_hash, check_password_hash
 from forms import RegisterForm, LoginForm
 import os
 
@@ -12,6 +14,22 @@ Bootstrap5(app)
 
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
+db = SQLAlchemy()
+db.init_app(app)
+
+
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+
+
+with app.app_context():
+    db.create_all()
+
 
 @app.route('/')
 def home():
@@ -21,6 +39,27 @@ def home():
 @app.route('/register', methods=["GET", "POST"])
 def register():
     register_form = RegisterForm()
+
+    if request.method == 'POST':
+        user = User.query.filter_by(email=register_form.email.data).first()
+
+        if not user:
+            if register_form.validate_on_submit():
+                hashed_password = generate_password_hash(register_form.password.data, method='pbkdf2:sha256', salt_length=8)
+
+                new_user = User(
+                    name=register_form.name.data,
+                    email=register_form.email.data,
+                    password=hashed_password
+                )
+
+                db.session.add(new_user)
+                db.session.commit()
+
+                return redirect(url_for('home'))
+        else:
+            flash('The email has already exist. Try to log in')
+            return redirect(url_for('login'))
     return render_template("register.html", form=register_form)
 
 
