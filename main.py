@@ -3,7 +3,7 @@ from flask_login import UserMixin, login_user, LoginManager, current_user, logou
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap5
 from werkzeug.security import generate_password_hash, check_password_hash
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, AddNewItemForm
 import os
 
 app = Flask(__name__)
@@ -25,6 +25,16 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+
+
+class Item(db.Model):
+    __tablename__ = "items"
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    unit = db.Column(db.String(20), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    image_url = db.Column(db.String(250), nullable=False)
 
 
 with app.app_context():
@@ -103,6 +113,28 @@ def logout():
 @app.route('/')
 def home():
     return render_template("index.html")
+
+
+@app.route('/add_item', methods=["GET", "POST"])
+def add_item():
+    add_item_form = AddNewItemForm()
+
+    if request.method == 'POST':
+        if add_item_form.validate_on_submit():
+            new_item = Item(
+                category=add_item_form.category.data,
+                name=add_item_form.name.data,
+                unit=add_item_form.unit.data,
+                price=str(add_item_form.price.data * 100),
+                image_url=add_item_form.image_url.data
+                )
+
+            db.session.add(new_item)
+            db.session.commit()
+
+            return redirect(url_for('home'))
+
+    return render_template("new_item.html", form=add_item_form)
 
 
 if __name__ == "__main__":
