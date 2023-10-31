@@ -112,7 +112,9 @@ def logout():
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    result = db.session.execute(db.select(Item))
+    items = result.scalars().all()
+    return render_template("index.html", items=items)
 
 
 @app.route('/add_item', methods=["GET", "POST"])
@@ -125,7 +127,7 @@ def add_item():
                 category=add_item_form.category.data,
                 name=add_item_form.name.data,
                 unit=add_item_form.unit.data,
-                price=str(add_item_form.price.data * 100),
+                price=int(add_item_form.price.data * 100),
                 image_url=add_item_form.image_url.data
                 )
 

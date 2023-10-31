@@ -10,62 +10,18 @@
         </div>
     </div>
     <div class="items row row-cols-3 justify-content-center">
-        <div class="col card text-center m-3" style="width: 18rem;">
-            <img src="{{ url_for('static', filename='/assets/img/item_img.jpg') }}" class="card-img-top" alt="item_image">
-            <div class="card-body">
-                <h5 class="selected-text-color card-title">Card title</h5>
-                <p class="main-text-color card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-warning btn-lg">Add</a>
+        {% if items %}
+        {% for item in items %}
+            <div class="col card text-center m-3" style="width: 18rem;">
+                <img src="{{ item.image_url }}" class="item-img card-img-top" alt="item_image">
+                <div class="card-body">
+                    <h5 class="selected-text-color card-title">£{{ (item.price/100)|round(2) }}</h5>
+                    <p class="main-text-color card-text">{{ item.name }}</p>
+                    <a href="#" class="btn btn-warning btn-lg">Add</a>
+                </div>
             </div>
-        </div>
-        <div class="col card text-center m-3" style="width: 18rem;">
-            <img src="{{ url_for('static', filename='/assets/img/item_img1.jpg') }}" class="card-img-top" alt="item_image">
-            <div class="card-body">
-                <h5 class="selected-text-color card-title">Card title</h5>
-                <p class="main-text-color card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-warning btn-lg">Add</a>
-            </div>
-        </div>
-        <div class="col card text-center m-3" style="width: 18rem;">
-            <img src="{{ url_for('static', filename='/assets/img/item_img2.jpg') }}" class="card-img-top" alt="item_image">
-            <div class="card-body">
-                <h5 class="selected-text-color card-title">Card title</h5>
-                <p class="main-text-color card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-warning btn-lg">Add</a>
-            </div>
-        </div>
-        <div class="col card text-center m-3" style="width: 18rem;">
-            <img src="{{ url_for('static', filename='/assets/img/item_img3.jpg') }}" class="card-img-top" alt="item_image">
-            <div class="card-body">
-                <h5 class="selected-text-color card-title">Card title</h5>
-                <p class="main-text-color card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-warning btn-lg">Add</a>
-            </div>
-        </div>
-        <div class="col card text-center m-3" style="width: 18rem;">
-            <img src="{{ url_for('static', filename='/assets/img/item_img4.jpg') }}" class="card-img-top" alt="item_image">
-            <div class="card-body">
-                <h5 class="selected-text-color card-title">Card title</h5>
-                <p class="main-text-color card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-warning btn-lg">Add</a>
-            </div>
-        </div>
-        <div class="col card text-center m-3" style="width: 18rem;">
-            <img src="{{ url_for('static', filename='/assets/img/item_img5.jpg') }}" class="card-img-top" alt="item_image">
-            <div class="card-body">
-                <h5 class="selected-text-color card-title">Card title</h5>
-                <p class="main-text-color card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-warning btn-lg">Add</a>
-            </div>
-        </div>
-        <div class="col card text-center m-3" style="width: 18rem;">
-            <img src="{{ url_for('static', filename='/assets/img/item_img6.jpg') }}" class="card-img-top" alt="item_image">
-            <div class="card-body">
-                <h5 class="selected-text-color card-title">Card title</h5>
-                <p class="main-text-color card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-warning btn-lg">Add</a>
-            </div>
-        </div>
+        {% endfor %}
+        {% endif %}
     </div>
 
 {% include "footer.html" %}
