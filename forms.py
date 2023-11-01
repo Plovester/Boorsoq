@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, URL
 
 
 UNITS_CHOICES = [('g', 'gram'), ('kg', 'kilogram'), ('ml', 'millilitre'), ('L', 'litre'), ('p', 'piece')]
-CATEGORIES_CHOICES = ['Biscuit', 'Bread', 'Brownie', 'Bun', 'Cake', 'Cheesecake', 'Cookie', 'Cupcake',
+CATEGORIES_CHOICES = ['Biscuit', 'Bread', 'Brownie', 'Bun', 'Cake', 'Cheesecake', 'Cupcake', 'Donut',
                       'Loaf', 'Pastry', 'Pie', 'Pudding', 'Tart']
 
 

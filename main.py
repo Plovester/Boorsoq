@@ -139,5 +139,10 @@ def add_item():
     return render_template("new_item.html", form=add_item_form)
 
 
+@app.route('/basket')
+def show_basket():
+    return render_template("basket.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
