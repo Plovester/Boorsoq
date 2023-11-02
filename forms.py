@@ -11,6 +11,7 @@ CATEGORIES_CHOICES = ['Biscuit', 'Bread', 'Brownie', 'Bun', 'Cake', 'Cheesecake'
 class RegisterForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("E-mail", validators=[DataRequired()])
+    phone_number = StringField("Phone number", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Sign me up")
 
