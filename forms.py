@@ -3,7 +3,6 @@ from wtforms import StringField, PasswordField, SubmitField, SelectField, Decima
 from wtforms.validators import DataRequired, URL
 
 
-UNITS_CHOICES = [('g', 'gram'), ('kg', 'kilogram'), ('ml', 'millilitre'), ('L', 'litre'), ('p', 'piece')]
 CATEGORIES_CHOICES = ['Biscuit', 'Bread', 'Brownie', 'Bun', 'Cake', 'Cheesecake', 'Cupcake', 'Donut',
                       'Loaf', 'Pastry', 'Pie', 'Pudding', 'Tart']
 
@@ -25,7 +24,7 @@ class LoginForm(FlaskForm):
 class AddNewItemForm(FlaskForm):
     category = SelectField("Category", choices=CATEGORIES_CHOICES, validators=[DataRequired()])
     name = StringField("Name", validators=[DataRequired()])
-    unit = SelectField("Unit", choices=UNITS_CHOICES, validators=[DataRequired()])
     price = DecimalField("Price", validators=[DataRequired()])
     image_url = StringField("Item image URL", validators=[DataRequired(), URL()])
+    description = StringField("Description", validators=[DataRequired()])
     add = SubmitField("Add item")

@@ -33,9 +33,9 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(100), unique=True, nullable=False)
-    unit = db.Column(db.String(20), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(250), nullable=False)
+    description = db.Column(db.String(2000), nullable=False)
 
 
 with app.app_context():
@@ -128,10 +128,10 @@ def add_item():
             new_item = Item(
                 category=add_item_form.category.data,
                 name=add_item_form.name.data,
-                unit=add_item_form.unit.data,
                 price=int(add_item_form.price.data * 100),
-                image_url=add_item_form.image_url.data
-                )
+                image_url=add_item_form.image_url.data,
+                description=add_item_form.description.data
+            )
 
             db.session.add(new_item)
             db.session.commit()
