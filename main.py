@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
 from flask_bootstrap import Bootstrap5
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import RegisterForm, LoginForm, AddNewItemForm
@@ -36,6 +37,11 @@ class Item(db.Model):
     price = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(2000), nullable=False)
+
+
+# class Cart(db.Model):
+#     __tablename__ = "carts"
+#     id = db.Column(db.Integer, primary_key=True)
 
 
 with app.app_context():

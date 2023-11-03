@@ -17,7 +17,7 @@
                 <div class="card-body">
                     <h5 class="selected-text-color card-title">£{{ (item.price/100)|round(2) }}</h5>
                     <p class="main-text-color card-text">{{ item.name }}</p>
-                    <a href="#" class="btn btn-warning btn-lg">Add</a>
+                    <button class="add-item-btn btn btn-warning btn-lg" onclick="addItemToCart({{ item.id }},{{ item.price }})">Add</button>
                 </div>
             </div>
         {% endfor %}
