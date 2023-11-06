@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -9,7 +9,6 @@ import os
 
 app = Flask(__name__)
 Bootstrap5(app)
-
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
@@ -147,9 +146,50 @@ def add_item():
     return render_template("new_item.html", form=add_item_form)
 
 
-@app.route('/basket')
+@app.route('/basket', methods=["GET", "POST"])
 def show_basket():
-    return render_template("basket.html")
+    if session.get('cart'):
+        cart = session['cart']
+        cart_items = []
+        total_qty = 0
+        total_price = 0
+
+        for item in cart:
+            db_item = Item.query.get(item["item_id"])
+            new_item = {
+                "item_id": db_item.id,
+                "item_name": db_item.name,
+                "item_price": db_item.price,
+                "item_qty": item["item_qty"],
+                "item_total_price": db_item.price * item["item_qty"]
+            }
+            total_qty += item["item_qty"]
+            total_price += new_item["item_total_price"]
+            cart_items.append(new_item)
+    else:
+        cart_items = []
+
+    return render_template("basket.html", cart_items=cart_items, total_qty=total_qty, total_price=total_price)
+
+
+@app.route('/cart/add_item', methods=['POST'])
+def add_item_to_cart():
+    item_data = request.get_json()
+
+    if session.get('cart'):
+        cart = session['cart']
+        item_index = next((index for (index, item) in enumerate(cart) if item["item_id"] == item_data['item_id']), None)
+
+        if item_index is None:
+            cart.append(item_data)
+        else:
+            cart[item_index]["item_qty"] += 1
+        session['cart'] = cart
+
+    else:
+        session['cart'] = [item_data]
+
+    return jsonify(response={"Success": "Successfully item added"})
 
 
 if __name__ == "__main__":
