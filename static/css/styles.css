@@ -41,3 +41,13 @@ input {
     object-fit: cover;
 }
 
+.cart-label {
+    width: 25px;
+    height: 25px;
+    top: -10px;
+    right: -10px;
+    color: white;
+}
+
+
+

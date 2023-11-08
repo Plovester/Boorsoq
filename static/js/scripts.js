@@ -8,9 +8,22 @@ function addItemToCart(item_id) {
             method: 'POST',
             mode: 'cors',
             headers: {
-            'Content-Type': 'application/json'
-           },
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(new_item)
-        });
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            label = document.getElementById('cart-qty-label')
+            label.innerHTML = data.result
+        })
 }
+
+
 

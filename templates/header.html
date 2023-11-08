@@ -30,8 +30,13 @@
                     <a class="main-text-color btn btn-warning" href="{{ url_for('login') }}">Sign in</a>
                     {% endif %}
                     {% if current_user.is_authenticated: %}
-                    <span class="me-5">Hi {{current_user.name}}</span>
-                    <a class="btn btn-outline-warning me-2" href="{{ url_for('show_basket') }}"><i class="fa-solid fa-basket-shopping" style="color: #ff7a00;"></i></a>
+                    <span class="me-5">Hi {{ current_user.name }}</span>
+                    <a class="position-relative btn btn-outline-warning me-2" href="{{ url_for('show_basket') }}">
+                        <i class="fa-solid fa-basket-shopping" style="color: #ff7a00;"></i>
+                        {% if session['total_qty_cart'] %}
+                        <span class="cart-label position-absolute bg-warning rounded-pill" id="cart-qty-label">{{ session['total_qty_cart'] }}</span>
+                        {% endif %}
+                    </a>
                     <a class="main-text-color btn btn-warning" href="{{ url_for('logout') }}">Log out</a>
                     {% endif %}
                 </div>

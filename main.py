@@ -41,6 +41,7 @@ class Item(db.Model):
 # class Cart(db.Model):
 #     __tablename__ = "carts"
 #     id = db.Column(db.Integer, primary_key=True)
+#
 
 
 with app.app_context():
@@ -121,6 +122,7 @@ def logout():
 def home():
     result = db.session.execute(db.select(Item))
     items = result.scalars().all()
+
     return render_template("index.html", items=items)
 
 
@@ -185,11 +187,14 @@ def add_item_to_cart():
         else:
             cart[item_index]["item_qty"] += 1
         session['cart'] = cart
-
     else:
         session['cart'] = [item_data]
 
-    return jsonify(response={"Success": "Successfully item added"})
+    total_qty = sum(item["item_qty"] for item in session['cart'])
+
+    session['total_qty_cart'] = total_qty
+
+    return jsonify(result=session['total_qty_cart'])
 
 
 if __name__ == "__main__":
