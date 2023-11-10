@@ -16,18 +16,24 @@
                     </li>
                     {% if cart_items %}
                     {% for item in cart_items %}
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <h6 class="my-0 main-text-color w-25">{{ item.item_name }}</h6>
-                        <div class="w-25 text-center">
+                    <li class="list-group-item d-flex justify-content-between lh-sm" id="{{ item.item_id }}-list-group">
+                        <div class="d-flex justify-content-start align-items-center w-25">
+                            <button class="btn btn-outline-warning me-4" onclick="removeItem({{ item.item_id }})"><i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i></button>
+                            <h6 class="my-0 main-text-color">{{ item.item_name }}</h6>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center w-25"">
                             <div class="qty-control input-group m-auto">
                                 <button class="btn btn-warning main-text-color" type="button" id="button-addon1" onclick="adjustQty({{ item.item_id }}, -1)">-</button>
                                 <input type="text" class="form-control text-center" id="{{ item.item_id }}-qty" onchange="adjustQtyInput(this, {{ item.item_id }})" value="{{ item.item_qty }}" aria-label="Quantity of item" aria-describedby="button-addon1">
                                 <button class="btn btn-warning main-text-color" type="button" id="button-addon2" onclick="adjustQty({{ item.item_id }}, 1)">+</button>
                             </div>
                         </div>
-
-                        <span class="main-text-color w-25 text-center">£{{ item.item_price/100 }}</span>
-                        <span class="main-text-color w-25 text-end" id="{{ item.item_id }}-total-price">£{{ item.item_total_price/100 }}</span>
+                        <div class="d-flex justify-content-center align-items-center w-25">
+                            <span class="main-text-color text-center">£{{ item.item_price/100 }}</span>
+                        </div>
+                        <div class="d-flex justify-content-end align-items-center w-25">
+                            <span class="main-text-color text-end" id="{{ item.item_id }}-total-price">£{{ item.item_total_price/100 }}</span>
+                        </div>
                     </li>
                     {% endfor %}
                     {% endif %}

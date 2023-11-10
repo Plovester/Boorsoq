@@ -198,7 +198,7 @@ def add_item_to_cart():
     return jsonify(result=session['total_qty_cart'])
 
 
-@app.route('/cart/adjust_item_qty', methods=['POST'])
+@app.route('/cart/adjust_item_qty', methods=['PUT'])
 def adjust_item_qty():
     qty_data = request.get_json()
 
@@ -219,6 +219,25 @@ def adjust_item_qty():
     return jsonify(result_item=item,
                    result_item_total_price=item_total_price,
                    result_total_qty=session['total_qty_cart'],
+                   result_total_price=session['total_price_cart'])
+
+
+@app.route('/cart/remove_item', methods=['DELETE'])
+def remove_item():
+    item_id = request.get_json()
+
+    cart = session['cart']
+    item = next((item for item in cart if item["item_id"] == item_id), None)
+    cart.remove(item)
+    session['cart'] = cart
+
+    total_qty = sum(item["item_qty"] for item in session['cart'])
+    session['total_qty_cart'] = total_qty
+
+    total_price = sum((Item.query.get(item["item_id"]).price * item["item_qty"]) for item in session['cart'])
+    session['total_price_cart'] = total_price
+
+    return jsonify(result_total_qty=session['total_qty_cart'],
                    result_total_price=session['total_price_cart'])
 
 

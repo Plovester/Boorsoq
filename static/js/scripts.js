@@ -32,7 +32,7 @@ function adjustQty(item_id, adjustment_qty) {
     if (updated_qty > 0) {
         updateQty(item_id, updated_qty, qty_input)
     } else {
-        console.log('negative meaning')
+        removeItem(item_id)
     }
 }
 
@@ -42,7 +42,7 @@ function adjustQtyInput(qty_input, item_id) {
     if (updated_qty > 0) {
         updateQty(item_id, updated_qty, qty_input)
     } else {
-        console.log('negative meaning')
+        removeItem(item_id)
     }
 }
 
@@ -53,7 +53,7 @@ function updateQty(item_id, updated_qty, qty_input) {
                     }
 
     let response = fetch('cart/adjust_item_qty', {
-            method: 'POST',
+            method: 'PUT',
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ function updateQty(item_id, updated_qty, qty_input) {
             qty_input.value = data.result_item['item_qty']
 
             item_total_price = document.getElementById(item_id + '-total-price')
-            item_total_price.innerHTML = '£' + data.result_item_total_price / 100
+            item_total_price.innerHTML = '£' + (data.result_item_total_price / 100).toFixed(1)
 
             total_qty_cell = document.getElementById('total_qty')
             total_qty_cell.innerHTML = `<strong>${data.result_total_qty}</strong>`;
@@ -80,7 +80,38 @@ function updateQty(item_id, updated_qty, qty_input) {
             label.innerHTML = data.result_total_qty
 
             total_price_cell = document.getElementById('total_price')
-            total_price_cell.innerHTML = `<strong>£${data.result_total_price / 100}</strong>`
+            total_price_cell.innerHTML = `<strong>£${(data.result_total_price / 100).toFixed(1)}</strong>`
+        })
+}
+
+function removeItem(item_id) {
+    let response = fetch('cart/remove_item', {
+            method: 'DELETE',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(item_id)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            let item_to_remove = document.getElementById(item_id + '-list-group')
+            item_to_remove.remove()
+
+            total_qty_cell = document.getElementById('total_qty')
+            total_qty_cell.innerHTML = `<strong>${data.result_total_qty}</strong>`;
+
+            label = document.getElementById('cart-qty-label')
+            label.innerHTML = data.result_total_qty
+
+            total_price_cell = document.getElementById('total_price')
+            total_price_cell.innerHTML = `<strong>£${(data.result_total_price / 100).toFixed(1)}</strong>`
         })
 }
 
