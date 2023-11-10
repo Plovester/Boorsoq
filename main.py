@@ -168,6 +168,8 @@ def show_basket():
             total_qty += item["item_qty"]
             total_price += new_item["item_total_price"]
             cart_items.append(new_item)
+
+        session['total_price_cart'] = total_price
     else:
         cart_items = []
 
@@ -191,10 +193,33 @@ def add_item_to_cart():
         session['cart'] = [item_data]
 
     total_qty = sum(item["item_qty"] for item in session['cart'])
-
     session['total_qty_cart'] = total_qty
 
     return jsonify(result=session['total_qty_cart'])
+
+
+@app.route('/cart/adjust_item_qty', methods=['POST'])
+def adjust_item_qty():
+    qty_data = request.get_json()
+
+    cart = session['cart']
+    item = next((item for item in cart if item["item_id"] == qty_data['item_id']), None)
+    item["item_qty"] = qty_data["item_qty"]
+    session['cart'] = cart
+
+    item_price = Item.query.get(item["item_id"]).price
+    item_total_price = item_price * item["item_qty"]
+
+    total_qty = sum(item["item_qty"] for item in session['cart'])
+    session['total_qty_cart'] = total_qty
+
+    total_price = sum((Item.query.get(item["item_id"]).price * item["item_qty"]) for item in session['cart'])
+    session['total_price_cart'] = total_price
+
+    return jsonify(result_item=item,
+                   result_item_total_price=item_total_price,
+                   result_total_qty=session['total_qty_cart'],
+                   result_total_price=session['total_price_cart'])
 
 
 if __name__ == "__main__":
