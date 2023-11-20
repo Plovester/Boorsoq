@@ -1,0 +1,42 @@
+{% include "header.html" %}
+
+<main class="mb-4">
+    <div class="container">
+        <div class="checkout-info row">
+            <div class="col-12 order-md-last">
+                <h4 class="mb-3">
+                    <span class="selected-text-color">Your order</span>
+                </h4>
+                <p>Check you order positions:</p>
+                {% for item in cart_items %}
+                    <div class="card border-warning mb-3 main-text-color" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{ item.item_image_url }}" class="img-fluid rounded-start" alt="Image for {{ item.item_name }}">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ item.item_name }}</h5>
+                                    <p class="card-text">Qty: {{ item.item_qty }}</p>
+                                    <p class="card-text">Price: £{{ item.item_price/100 }}</p>
+                                    <p class="card-text"><b>Total price: £{{ item.item_total_price/100 }}</b></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <h5 class="mb-3">Total price for your order: £{{ total_price/100 }}</h5>
+                <p>Choose the date for your order to be ready:</p>
+                <div class="input-group mb-4 w-50">
+                    <span class="input-group-text">
+                        <i class="fa-regular fa-calendar-days" style="color: #ff7a00;"></i>
+                    </span>
+                    <input type="text" id="order-date" name="order-date" class="form-control" placeholder="DD/MM/YYYY" required>
+                </div>
+                <button class="main-text-color btn btn-warning" onclick="createOrder()">Confirm order</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include "footer.html" %}

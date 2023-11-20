@@ -115,3 +115,45 @@ function removeItem(item_id) {
         })
 }
 
+function createOrder() {
+    const order_date = document.getElementById('order-date').value
+
+    let response = fetch('confirm_order', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(order_date)
+        })
+        .then(response => {
+            if (response.ok) {
+                label = document.getElementById('cart-qty-label')
+                label.innerHTML = ''
+
+                window.location.href = "/";
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+}
+
+
+
+const elem = document.querySelector('input[name="order-date"]');
+const datepicker = new Datepicker(elem, {
+    datesDisabled: function (date) {
+        let isDateDisabled;
+        const current_date = new Date()
+        const today = new Date(current_date.getFullYear(), current_date.getMonth(), current_date.getDate());
+        if (date < today) {
+            isDateDisabled = true
+        } else {
+            isDateDisabled = false
+        }
+        return isDateDisabled;
+    },
+    format: 'dd/mm/yyyy',
+    weekStart: 1
+});
+

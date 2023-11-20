@@ -10,6 +10,7 @@ input {
     background-image: url("../assets/img/header-img.jpg");
     background-size: 150%;
     background-position: right 80% bottom 30%;
+    margin-top: 5vw;
 }
 
 .logo {
@@ -53,5 +54,8 @@ input {
     width:40%;
 }
 
+.cart-info, .new-item-form, .checkout-info, .register-form {
+    margin-top: 5vw !important;
+}
 
 

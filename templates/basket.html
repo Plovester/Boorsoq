@@ -2,9 +2,9 @@
 
 <main class="mb-4">
     <div class="container">
-        <div class="row">
+        <div class="cart-info row">
             <div class="col-12 order-md-last">
-                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-3">
                     <span class="selected-text-color">Your cart</span>
                 </h4>
                 <ul class="list-group mb-3">
@@ -21,7 +21,7 @@
                             <button class="btn btn-outline-warning me-4" onclick="removeItem({{ item.item_id }})"><i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i></button>
                             <h6 class="my-0 main-text-color">{{ item.item_name }}</h6>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center w-25"">
+                        <div class="d-flex justify-content-center align-items-center w-25">
                             <div class="qty-control input-group m-auto">
                                 <button class="btn btn-warning main-text-color" type="button" id="button-addon1" onclick="adjustQty({{ item.item_id }}, -1)">-</button>
                                 <input type="text" class="form-control text-center" id="{{ item.item_id }}-qty" onchange="adjustQtyInput(this, {{ item.item_id }})" value="{{ item.item_qty }}" aria-label="Quantity of item" aria-describedby="button-addon1">
@@ -44,6 +44,9 @@
                         <span class="main-text-color w-25 text-end" id="total_price"><strong>£{{ total_price/100 }}</strong></span>
                     </li>
                 </ul>
+                {% if cart_items %}
+                <a class="main-text-color btn btn-warning" href="{{ url_for('checkout') }}">Checkout</a>
+                {% endif %}
             </div>
         </div>
     </div>

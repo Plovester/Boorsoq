@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from flask_bootstrap import Bootstrap5
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import RegisterForm, LoginForm, AddNewItemForm
+from datetime import date
 import os
 
 app = Flask(__name__)
@@ -26,6 +27,7 @@ class User(UserMixin, db.Model):
     phone_number = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    orders = relationship("Order", back_populates="user")
 
 
 class Item(db.Model):
@@ -36,12 +38,29 @@ class Item(db.Model):
     price = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(2000), nullable=False)
+    order_item = relationship("OrderItem", uselist=False, back_populates="item")
 
 
-# class Cart(db.Model):
-#     __tablename__ = "carts"
-#     id = db.Column(db.Integer, primary_key=True)
-#
+class OrderItem(db.Model):
+    __tablename__ = "order_items"
+    id = db.Column(db.Integer, primary_key=True)
+    price = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    item = relationship("Item", back_populates="order_item")
+    item_id = db.Column(db.Integer, db.ForeignKey("items.id"))
+    order = relationship("Order", back_populates="order_items")
+    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"))
+
+
+class Order(db.Model):
+    __tablename__ = "orders"
+    id = db.Column(db.Integer, primary_key=True)
+    user = relationship("User", back_populates="orders")
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_at = db.Column(db.String(250), nullable=False)
+    ready_by_date = db.Column(db.String(250), nullable=False)
+    status = db.Column(db.String(250), nullable=False)
+    order_items = relationship("OrderItem", back_populates="order")
 
 
 with app.app_context():
@@ -106,7 +125,7 @@ def login():
                         return redirect(url_for('login'))
                 else:
                     flash('The email does not exist. Try again or register')
-                    return redirect('login')
+                    return redirect(url_for('login'))
 
     return render_template("register.html", form=login_form)
 
@@ -115,6 +134,12 @@ def login():
 @login_required
 def logout():
     logout_user()
+    return redirect(url_for('home'))
+
+
+@app.route('/users/<int:user_id>')
+@login_required
+def show_user_account(user_id):
     return redirect(url_for('home'))
 
 
@@ -130,7 +155,7 @@ def home():
 def add_item():
     add_item_form = AddNewItemForm()
 
-    if request.method == 'POST':
+    if request.method == "POST":
         if add_item_form.validate_on_submit():
             new_item = Item(
                 category=add_item_form.category.data,
@@ -172,6 +197,8 @@ def show_basket():
         session['total_price_cart'] = total_price
     else:
         cart_items = []
+        total_qty = 0
+        total_price = 0
 
     return render_template("basket.html", cart_items=cart_items, total_qty=total_qty, total_price=total_price)
 
@@ -241,5 +268,63 @@ def remove_item():
                    result_total_price=session['total_price_cart'])
 
 
+@app.route('/checkout', methods=["GET", "POST"])
+def checkout():
+    cart = session['cart']
+    total_price = session['total_price_cart']
+    total_qty = session['total_qty_cart']
+
+    cart_items = []
+    for item in cart:
+        db_item = Item.query.get(item["item_id"])
+        new_item = {
+            "item_id": db_item.id,
+            "item_name": db_item.name,
+            "item_price": db_item.price,
+            "item_qty": item["item_qty"],
+            "item_total_price": db_item.price * item["item_qty"],
+            "item_image_url": db_item.image_url
+        }
+        cart_items.append(new_item)
+
+    return render_template("checkout.html", cart_items=cart_items, total_qty=total_qty, total_price=total_price)
+
+
+@app.route('/confirm_order', methods=["POST"])
+def confirm_order():
+    ready_by_date = request.get_json()
+    cart = session['cart']
+
+    new_order = Order(
+        user_id=current_user.id,
+        created_at=date.today().strftime("%d/%m/%Y"),
+        ready_by_date=ready_by_date,
+        status='new'
+    )
+
+    db.session.add(new_order)
+    db.session.commit()
+
+    for item in cart:
+        db_item = Item.query.get(item["item_id"])
+
+        new_order_item = OrderItem(
+            price=db_item.price,
+            quantity=item["item_qty"],
+            item_id=db_item.id,
+            order_id=new_order.id
+        )
+
+        db.session.add(new_order_item)
+        db.session.commit()
+
+    session['cart'] = []
+    session['total_price_cart'] = 0
+    session['total_qty_cart'] = 0
+
+    return jsonify('Success')
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+
