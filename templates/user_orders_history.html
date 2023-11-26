@@ -1,0 +1,34 @@
+{% include "header.html" %}
+
+<div class="indentation-from-top">
+    <h4 class="mb-3">
+        <span class="selected-text-color">Your orders</span>
+    </h4>
+    <div class="table-responsive small">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th class="selected-text-color" scope="col">No.</th>
+              <th class="selected-text-color" scope="col">Status</th>
+              <th class="selected-text-color" scope="col">Date</th>
+              <th class="selected-text-color" scope="col">Ready by date</th>
+              <th class="selected-text-color" scope="col">Total price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+              <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.created_at }}</td>
+                <td>{{ order.ready_by_date }}</td>
+                <td>{{ order.total_price }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+</div>
+
+
+{% include "footer.html" %}

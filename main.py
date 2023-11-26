@@ -59,6 +59,7 @@ class Order(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     created_at = db.Column(db.String(250), nullable=False)
     ready_by_date = db.Column(db.String(250), nullable=False)
+    total_price = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(250), nullable=False)
     order_items = relationship("OrderItem", back_populates="order")
 
@@ -137,10 +138,28 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route('/users/<int:user_id>')
+@app.route('/user_profile')
 @login_required
-def show_user_account(user_id):
-    return redirect(url_for('home'))
+def show_user_account():
+    return render_template("user_profile.html")
+
+
+@app.route('/user_settings/<int:user_id>')
+@login_required
+def user_settings(user_id):
+    return render_template("user_settings.html")
+
+
+@app.route('/orders_history/<int:user_id>')
+@login_required
+def orders_history(user_id):
+    user_orders = db.session.execute(db.select(Order).where(
+                Order.user_id == user_id
+            )).scalars().all()
+
+    reversed_orders_list = reversed(user_orders)
+
+    return render_template("user_orders_history.html", orders=reversed_orders_list)
 
 
 @app.route('/')
@@ -299,6 +318,7 @@ def confirm_order():
         user_id=current_user.id,
         created_at=date.today().strftime("%d/%m/%Y"),
         ready_by_date=ready_by_date,
+        total_price=session['total_price_cart'],
         status='new'
     )
 

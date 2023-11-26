@@ -26,11 +26,11 @@ input {
 }
 
 .main-text-color {
-    color: #864000;
+    color: #864000 !important;
 }
 
 .selected-text-color {
-    color: #FF7A00;
+    color: #FF7A00 !important;
 }
 
 ::placeholder {
@@ -54,8 +54,14 @@ input {
     width:40%;
 }
 
-.cart-info, .new-item-form, .checkout-info, .register-form {
+.indentation-from-top {
     margin-top: 5vw !important;
+}
+
+@media screen and (min-width: 1600px) {
+    .indentation-from-top {
+        margin-top: 7vw !important;
+    }
 }
 
 
