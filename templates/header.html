@@ -37,8 +37,10 @@
                         <span class="me-5">Hi {{ current_user.name }}</span>
                         <a class="position-relative btn btn-outline-warning me-2" href="{{ url_for('show_basket') }}">
                             <i class="fa-solid fa-basket-shopping" style="color: #ff7a00;"></i>
-                            {% if session['total_qty_cart'] %}
-                            <span class="cart-label position-absolute bg-warning rounded-pill" id="cart-qty-label">{{ session['total_qty_cart'] }}</span>
+                            {% if session['total_qty_cart'] > 0 %}
+                            <span class="cart-label position-absolute bg-warning rounded-pill visible" id="cart-qty-label">{{ session['total_qty_cart'] }}</span>
+                            {% else %}
+                            <span class="cart-label position-absolute bg-warning rounded-pill invisible" id="cart-qty-label">{{ session['total_qty_cart'] }}</span>
                             {% endif %}
                         </a>
                         <a class="btn btn-outline-warning me-2 selected-text-color" href="{{ url_for('show_user_account') }}">Your account</a>

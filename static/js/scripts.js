@@ -1,3 +1,17 @@
+function changeQtyLabel(qty) {
+    label = document.getElementById('cart-qty-label')
+
+    if (qty > 0) {
+        label.style.visibility = "visible";
+        label.classList.add('visible');
+        label.classList.remove('invisible');
+        label.innerHTML = qty
+    } else {
+        label.classList.remove('visible');
+        label.classList.add('invisible');
+    }
+}
+
 function addItemToCart(item_id) {
     const new_item = {
                     item_id: item_id,
@@ -20,8 +34,10 @@ function addItemToCart(item_id) {
             }
         })
         .then(data => {
-            label = document.getElementById('cart-qty-label')
-            label.innerHTML = data.result
+            changeQtyLabel(data.result)
+//            label = document.getElementById('cart-qty-label')
+//            label.style.visibility = "visible";
+//            label.innerHTML = data.result
         })
 }
 
@@ -76,8 +92,10 @@ function updateQty(item_id, updated_qty, qty_input) {
             total_qty_cell = document.getElementById('total_qty')
             total_qty_cell.innerHTML = `<strong>${data.result_total_qty}</strong>`;
 
-            label = document.getElementById('cart-qty-label')
-            label.innerHTML = data.result_total_qty
+//            label = document.getElementById('cart-qty-label')
+//            label.innerHTML = data.result_total_qty
+
+            changeQtyLabel(data.result_total_qty)
 
             total_price_cell = document.getElementById('total_price')
             total_price_cell.innerHTML = `<strong>£${(data.result_total_price / 100).toFixed(1)}</strong>`
@@ -107,8 +125,9 @@ function removeItem(item_id) {
             total_qty_cell = document.getElementById('total_qty')
             total_qty_cell.innerHTML = `<strong>${data.result_total_qty}</strong>`;
 
-            label = document.getElementById('cart-qty-label')
-            label.innerHTML = data.result_total_qty
+//            label = document.getElementById('cart-qty-label')
+//            label.innerHTML = data.result_total_qty
+            changeQtyLabel(data.result_total_qty)
 
             total_price_cell = document.getElementById('total_price')
             total_price_cell.innerHTML = `<strong>£${(data.result_total_price / 100).toFixed(1)}</strong>`
@@ -128,8 +147,9 @@ function createOrder() {
         })
         .then(response => {
             if (response.ok) {
-                label = document.getElementById('cart-qty-label')
-                label.innerHTML = ''
+                changeQtyLabel(0)
+//                label = document.getElementById('cart-qty-label')
+//                label.innerHTML = ''
 
                 window.location.href = "/";
             } else {
