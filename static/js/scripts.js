@@ -2,7 +2,6 @@ function changeQtyLabel(qty) {
     label = document.getElementById('cart-qty-label')
 
     if (qty > 0) {
-        label.style.visibility = "visible";
         label.classList.add('visible');
         label.classList.remove('invisible');
         label.innerHTML = qty
@@ -35,9 +34,6 @@ function addItemToCart(item_id) {
         })
         .then(data => {
             changeQtyLabel(data.result)
-//            label = document.getElementById('cart-qty-label')
-//            label.style.visibility = "visible";
-//            label.innerHTML = data.result
         })
 }
 
@@ -92,9 +88,6 @@ function updateQty(item_id, updated_qty, qty_input) {
             total_qty_cell = document.getElementById('total_qty')
             total_qty_cell.innerHTML = `<strong>${data.result_total_qty}</strong>`;
 
-//            label = document.getElementById('cart-qty-label')
-//            label.innerHTML = data.result_total_qty
-
             changeQtyLabel(data.result_total_qty)
 
             total_price_cell = document.getElementById('total_price')
@@ -125,8 +118,6 @@ function removeItem(item_id) {
             total_qty_cell = document.getElementById('total_qty')
             total_qty_cell.innerHTML = `<strong>${data.result_total_qty}</strong>`;
 
-//            label = document.getElementById('cart-qty-label')
-//            label.innerHTML = data.result_total_qty
             changeQtyLabel(data.result_total_qty)
 
             total_price_cell = document.getElementById('total_price')
@@ -148,9 +139,6 @@ function createOrder() {
         .then(response => {
             if (response.ok) {
                 changeQtyLabel(0)
-//                label = document.getElementById('cart-qty-label')
-//                label.innerHTML = ''
-
                 window.location.href = "/";
             } else {
                 throw new Error('Request failed');
@@ -158,7 +146,110 @@ function createOrder() {
         })
 }
 
+function editUserName(id) {
+    const name = document.getElementById('name').value
 
+    let response = fetch(`/user_settings/${id}`, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: name})
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            user_name_in_header = document.getElementById("user-name")
+            user_name_in_header.innerHTML = data.name
+
+            user_name_in_settings = document.getElementById("current-user-name")
+            user_name_in_settings.innerHTML = data.name
+
+        })
+}
+
+function editUserEmail(id) {
+    const email = document.getElementById('email').value
+
+    let response = fetch(`/user_settings/${id}`, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email: email})
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            user_email = document.getElementById("current-user-email")
+            user_email.innerHTML = data.email
+        })
+}
+
+function editUserPhone(id) {
+    const phone = document.getElementById('phone').value
+
+    let response = fetch(`/user_settings/${id}`, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({phone_number: phone})
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            user_phone = document.getElementById("current-user-phone")
+            user_phone.innerHTML = data.phone_number
+        })
+}
+
+function editUserPassword(id) {
+    const old_password = document.getElementById('old-password').value
+    const new_password = document.getElementById('new-password').value
+    const confirmed_password = document.getElementById('confirmed-password').value
+
+    if (new_password === confirmed_password) {
+        const password_info = {
+                        old_password: old_password,
+                        new_password: new_password
+                    }
+
+        let response = fetch(`/user_settings/${id}/password`, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(password_info)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response
+            } else {
+                throw new Error('Request failed')
+            }
+        })
+    }
+}
 
 const elem = document.querySelector('input[name="order-date"]');
 const datepicker = new Datepicker(elem, {
@@ -176,4 +267,3 @@ const datepicker = new Datepicker(elem, {
     format: 'dd/mm/yyyy',
     weekStart: 1
 });
-

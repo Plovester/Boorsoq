@@ -22,7 +22,7 @@
                 <td>{{ order.status }}</td>
                 <td>{{ order.created_at }}</td>
                 <td>{{ order.ready_by_date }}</td>
-                <td>{{ order.total_price }}</td>
+                <td>£{{ (order.total_price/100)|round(2) }}</td>
               </tr>
             {% endfor %}
           </tbody>

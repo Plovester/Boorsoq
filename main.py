@@ -144,10 +144,43 @@ def show_user_account():
     return render_template("user_profile.html")
 
 
-@app.route('/user_settings/<int:user_id>')
+@app.route('/user_settings')
 @login_required
-def user_settings(user_id):
+def user_settings():
     return render_template("user_settings.html")
+
+
+@app.route('/user_settings/<int:user_id>', methods=['PUT'])
+@login_required
+def edit_user_info(user_id):
+    parameter = request.get_json()
+    db.session.query(User).filter(User.id == user_id).update(parameter, synchronize_session=False)
+    db.session.commit()
+    user = User.query.filter_by(id=user_id).first()
+    user_info = {
+        'name': user.name,
+        'email': user.email,
+        'phone_number': user.phone_number
+    }
+    return jsonify(user_info)
+
+
+@app.route('/user_settings/<int:user_id>/password', methods=['PUT'])
+@login_required
+def edit_user_password(user_id):
+    user_password_info = request.get_json()
+    user = User.query.filter_by(id=user_id).first()
+
+    is_password_correct = check_password_hash(user.password, user_password_info['old_password'])
+
+    if is_password_correct:
+        new_password = generate_password_hash(user_password_info['new_password'], method='pbkdf2:sha256', salt_length=8)
+        db.session.query(User).filter(User.id == user_id).update({'password': new_password}, synchronize_session=False)
+        db.session.commit()
+    else:
+        print('Error')
+
+    return "Success", 204
 
 
 @app.route('/orders_history/<int:user_id>')
