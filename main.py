@@ -197,8 +197,7 @@ def orders_history(user_id):
 
 @app.route('/')
 def home():
-    result = db.session.execute(db.select(Item))
-    items = result.scalars().all()
+    items = db.session.execute(db.select(Item)).scalars().all()
 
     return render_template("index.html", items=items)
 
@@ -376,6 +375,14 @@ def confirm_order():
     session['total_qty_cart'] = 0
 
     return jsonify('Success')
+
+
+@app.route('/admin_panel')
+@login_required
+def admin_panel():
+    orders = db.session.execute(db.select(Order)).scalars().all()
+
+    return render_template("admin_panel.html", orders=orders)
 
 
 if __name__ == "__main__":
