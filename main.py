@@ -377,12 +377,20 @@ def confirm_order():
     return jsonify('Success')
 
 
-@app.route('/admin_panel')
+@app.route('/orders')
 @login_required
 def admin_panel():
     orders = db.session.execute(db.select(Order)).scalars().all()
 
     return render_template("admin_panel/admin_panel.html", orders=orders)
+
+
+@app.route('/products')
+@login_required
+def admin_panel_products():
+    products = db.session.execute(db.select(Item)).scalars().all()
+
+    return render_template("admin_panel/admin_panel_products.html", products=products)
 
 
 if __name__ == "__main__":
