@@ -1,0 +1,33 @@
+{% include "admin_panel/admin_panel_header.html" %}
+
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    <h2 class="selected-text-color">Orders</h2>
+                    <div class="table-responsive small">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                            <tr>
+                                <th class="selected-text-color" scope="col">Order ID</th>
+                                <th class="selected-text-color" scope="col">Customer ID</th>
+                                <th class="selected-text-color" scope="col">Status</th>
+                                <th class="selected-text-color" scope="col">Date</th>
+                                <th class="selected-text-color" scope="col">Ready by date</th>
+                                <th class="selected-text-color" scope="col">Total price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td>{{ order.user_id }}</td>
+                                <td>{{ order.status }}</td>
+                                <td>{{ order.created_at }}</td>
+                                <td>{{ order.ready_by_date }}</td>
+                                <td>£{{ (order.total_price/100)|round(2) }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+
+{% include "admin_panel/admin_panel_footer.html" %}

@@ -382,7 +382,7 @@ def confirm_order():
 def admin_panel():
     orders = db.session.execute(db.select(Order)).scalars().all()
 
-    return render_template("admin_panel.html", orders=orders)
+    return render_template("admin_panel/admin_panel.html", orders=orders)
 
 
 if __name__ == "__main__":
