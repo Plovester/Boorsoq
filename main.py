@@ -393,6 +393,23 @@ def admin_panel_products():
     return render_template("admin_panel/admin_panel_products.html", products=products)
 
 
+@app.route('/customers')
+@login_required
+def admin_panel_customers():
+    users = db.session.execute(db.select(User)).scalars().all()
+    customers = []
+    for user in users:
+        customer = {
+            'id': user.id,
+            'name': user.name,
+            'phone_number': user.phone_number,
+            'email': user.email
+        }
+        customers.append(customer)
+
+    return render_template("admin_panel/admin_panel_customers.html", customers=customers)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 

@@ -1,0 +1,29 @@
+{% include "admin_panel/admin_panel_header.html" %}
+
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    <h2 class="selected-text-color">Customers</h2>
+                    <div class="table-responsive small">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                            <tr>
+                                <th class="selected-text-color" scope="col">Customer ID</th>
+                                <th class="selected-text-color" scope="col">Name</th>
+                                <th class="selected-text-color" scope="col">Phone number</th>
+                                <th class="selected-text-color" scope="col">E-Mail</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for customer in customers %}
+                            <tr>
+                                <td>{{ customer.id }}</td>
+                                <td>{{ customer.name }}</td>
+                                <td>{{ customer.phone_number }}</td>
+                                <td>{{ customer.email }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+
+{% include "admin_panel/admin_panel_footer.html" %}
