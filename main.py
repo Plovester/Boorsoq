@@ -410,6 +410,12 @@ def admin_panel_customers():
     return render_template("admin_panel/admin_panel_customers.html", customers=customers)
 
 
+@app.route('/reports')
+@login_required
+def admin_panel_reports():
+    return render_template("admin_panel/admin_panel_reports.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 

@@ -29,7 +29,7 @@ input {
     color: #864000 !important;
 }
 
-.selected-text-color {
+.selected-text-color, .active {
     color: #FF7A00 !important;
 }
 

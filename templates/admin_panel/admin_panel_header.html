@@ -16,51 +16,39 @@
             <div class="mt-5 container-fluid">
                 <div class="row">
                     <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
-                        <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
-                            <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
-                                <ul class="nav flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link d-flex align-items-center gap-2 active selected-text-color" href="{{ url_for('admin_panel') }}">
-                                            <i class="fa-solid fa-table"></i>
-                                            Orders
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link d-flex align-items-center gap-2 main-text-color" href="{{ url_for('admin_panel_products') }}">
-                                            <i class="fa-solid fa-stroopwafel"></i>
-                                            Products
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link d-flex align-items-center gap-2 main-text-color" href="{{ url_for('admin_panel_customers') }}">
-                                            <i class="fa-solid fa-users"></i>
-                                            Customers
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link d-flex align-items-center gap-2 main-text-color" href="#">
-                                            <i class="fa-solid fa-chart-pie"></i>
-                                            Reports
-                                        </a>
-                                    </li>
-                                </ul>
+                        {% set navigation_bar = [
+                            ('/orders', 'admin_panel', 'fa-table', 'Orders'),
+                            ('/products', 'admin_panel_products', 'fa-stroopwafel', 'Products'),
+                            ('/customers', 'admin_panel_customers', 'fa-users', 'Customers'),
+                            ('/reports', 'admin_panel_reports', 'fa-chart-pie','Reports')
+                        ] %}
+                        {% set active_page = request.endpoint|default('admin_panel') %}
+                        <ul class="nav flex-column mt-3">
+                            {% for href, id, icon, caption in navigation_bar %}
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex align-items-center gap-2 main-text-color {{ 'active' if id == active_page }}"
+                                       href="{{ href }}">
+                                        <i class="fa-solid {{ icon }}"></i>
+                                        {{ caption }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
 
-                                <hr class="my-3">
+                        <hr class="my-3">
 
-                                <ul class="nav flex-column mb-auto">
-                                    <li class="nav-item">
-                                        <a class="nav-link d-flex align-items-center gap-2 main-text-color" href="#">
-                                            <i class="fa-solid fa-gears"></i>
-                                            Settings
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link d-flex align-items-center gap-2 main-text-color" href="#">
-                                            <i class="fa-solid fa-right-from-bracket"></i>
-                                            Sign out
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        <ul class="nav flex-column mb-auto">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2 main-text-color" href="#">
+                                    <i class="fa-solid fa-gears"></i>
+                                    Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2 main-text-color" href="#">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                    Sign out
+                                </a>
+                            </li>
+                        </ul>
                     </div>
