@@ -186,9 +186,7 @@ def edit_user_password(user_id):
 @app.route('/orders_history/<int:user_id>')
 @login_required
 def orders_history(user_id):
-    user_orders = db.session.execute(db.select(Order).where(
-                Order.user_id == user_id
-            )).scalars().all()
+    user_orders = db.session.execute(db.select(Order).where(Order.user_id == user_id)).scalars().all()
 
     reversed_orders_list = reversed(user_orders)
 
@@ -374,7 +372,7 @@ def confirm_order():
     session['total_price_cart'] = 0
     session['total_qty_cart'] = 0
 
-    return jsonify('Success')
+    return "Success", 204
 
 
 @app.route('/orders')
@@ -414,6 +412,17 @@ def admin_panel_customers():
 @login_required
 def admin_panel_reports():
     return render_template("admin_panel/admin_panel_reports.html")
+
+
+@app.route('/orders/<int:order_id>/status', methods=['PUT'])
+@login_required
+def change_order_status(order_id):
+    new_status = request.get_json()
+
+    db.session.query(Order).filter(Order.id == order_id).update(new_status, synchronize_session=False)
+    db.session.commit()
+
+    return "Success", 204
 
 
 if __name__ == "__main__":

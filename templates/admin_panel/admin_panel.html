@@ -1,9 +1,11 @@
 {% include "admin_panel/admin_panel_header.html" %}
 
+{% set status_options = ['new', 'in progress', 'ready', 'canceled', 'completed'] %}
+
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                     <h2 class="selected-text-color">Orders</h2>
                     <div class="table-responsive small">
-                        <table class="table table-striped table-sm">
+                        <table class="table table-striped table-m text-center">
                             <thead>
                             <tr>
                                 <th class="selected-text-color" scope="col">Order ID</th>
@@ -19,7 +21,13 @@
                             <tr>
                                 <td>{{ order.id }}</td>
                                 <td>{{ order.user_id }}</td>
-                                <td>{{ order.status }}</td>
+                                <td>
+                                    <select class="form-select p-1 px-2 w-75 m-auto" id="statusOptions{{ order.id }}" onchange="changeOrderStatus({{ order.id }})">
+                                        {% for status in status_options %}
+                                            <option value="{{ status }}" {% if status ==  order.status %} selected {% endif %} >{{ status }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
                                 <td>{{ order.created_at }}</td>
                                 <td>{{ order.ready_by_date }}</td>
                                 <td>£{{ (order.total_price/100)|round(2) }}</td>
