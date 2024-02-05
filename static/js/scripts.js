@@ -1,5 +1,5 @@
 function changeQtyLabel(qty) {
-    label = document.getElementById('cart-qty-label')
+    let label = document.getElementById('cart-qty-label')
 
     if (qty > 0) {
         label.classList.add('visible');
@@ -39,7 +39,7 @@ function addItemToCart(item_id) {
 
 function adjustQty(item_id, adjustment_qty) {
     let qty_input = document.getElementById(item_id + '-qty')
-    updated_qty = +qty_input.value + adjustment_qty
+    let updated_qty = +qty_input.value + adjustment_qty
 
     if (updated_qty > 0) {
         updateQty(item_id, updated_qty, qty_input)
@@ -49,7 +49,7 @@ function adjustQty(item_id, adjustment_qty) {
 }
 
 function adjustQtyInput(qty_input, item_id) {
-    updated_qty = +qty_input.value
+    let updated_qty = +qty_input.value
 
     if (updated_qty > 0) {
         updateQty(item_id, updated_qty, qty_input)
@@ -82,15 +82,15 @@ function updateQty(item_id, updated_qty, qty_input) {
         .then(data => {
             qty_input.value = data.result_item['item_qty']
 
-            item_total_price = document.getElementById(item_id + '-total-price')
+            let item_total_price = document.getElementById(item_id + '-total-price')
             item_total_price.innerHTML = '£' + (data.result_item_total_price / 100).toFixed(1)
 
-            total_qty_cell = document.getElementById('total_qty')
+            let total_qty_cell = document.getElementById('total_qty')
             total_qty_cell.innerHTML = `<strong>${data.result_total_qty}</strong>`;
 
             changeQtyLabel(data.result_total_qty)
 
-            total_price_cell = document.getElementById('total_price')
+            let total_price_cell = document.getElementById('total_price')
             total_price_cell.innerHTML = `<strong>£${(data.result_total_price / 100).toFixed(1)}</strong>`
         })
 }
@@ -115,12 +115,12 @@ function removeItem(item_id) {
             let item_to_remove = document.getElementById(item_id + '-list-group')
             item_to_remove.remove()
 
-            total_qty_cell = document.getElementById('total_qty')
+            let total_qty_cell = document.getElementById('total_qty')
             total_qty_cell.innerHTML = `<strong>${data.result_total_qty}</strong>`;
 
             changeQtyLabel(data.result_total_qty)
 
-            total_price_cell = document.getElementById('total_price')
+            let total_price_cell = document.getElementById('total_price')
             total_price_cell.innerHTML = `<strong>£${(data.result_total_price / 100).toFixed(1)}</strong>`
         })
 }
@@ -165,10 +165,10 @@ function editUserName(id) {
             }
         })
         .then(data => {
-            user_name_in_header = document.getElementById("user-name")
+            let user_name_in_header = document.getElementById("user-name")
             user_name_in_header.innerHTML = data.name
 
-            user_name_in_settings = document.getElementById("current-user-name")
+            let user_name_in_settings = document.getElementById("current-user-name")
             user_name_in_settings.innerHTML = data.name
 
         })
@@ -193,7 +193,7 @@ function editUserEmail(id) {
             }
         })
         .then(data => {
-            user_email = document.getElementById("current-user-email")
+            let user_email = document.getElementById("current-user-email")
             user_email.innerHTML = data.email
         })
 }
@@ -217,7 +217,7 @@ function editUserPhone(id) {
             }
         })
         .then(data => {
-            user_phone = document.getElementById("current-user-phone")
+            let user_phone = document.getElementById("current-user-phone")
             user_phone.innerHTML = data.phone_number
         })
 }

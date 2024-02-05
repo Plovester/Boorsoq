@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, DecimalField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, DecimalField, BooleanField
 from wtforms.validators import DataRequired, URL
 
 
@@ -27,4 +27,5 @@ class AddNewItemForm(FlaskForm):
     price = DecimalField("Price", validators=[DataRequired()])
     image_url = StringField("Item image URL", validators=[DataRequired(), URL()])
     description = StringField("Description", validators=[DataRequired()])
+    visibility = BooleanField("Visible", default=True)
     add = SubmitField("Add item")
