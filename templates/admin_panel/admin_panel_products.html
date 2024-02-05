@@ -1,37 +1,76 @@
 {% include "admin_panel/admin_panel_header.html" %}
 
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    <h2 class="selected-text-color">Products</h2>
-                    <div class="table-responsive small">
-                        <table class="table table-striped table-sm">
-                            <thead>
-                            <tr>
-                                <th class="selected-text-color" scope="col">Product ID</th>
-                                <th class="selected-text-color" scope="col">Category</th>
-                                <th class="selected-text-color" scope="col">Name</th>
-                                <th class="selected-text-color" scope="col">Price</th>
-                                <th class="selected-text-color" scope="col">Image</th>
-                                <th class="selected-text-color" scope="col">Description</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for product in products %}
-                            <tr>
-                                <td>{{ product.id }}</td>
-                                <td>{{ product.category }}</td>
-                                <td>{{ product.name }}</td>
-                                <td>£{{ (product.price/100)|round(2) }}</td>
-                                <td><img src="{{ product.image_url }}"
-                                         class="item-img rounded"
-                                         alt="product image"
-                                         style="width: 120px; height: 120px;"></td>
-                                <td>{{ product.description }}</td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                        <button class="add-item-btn btn btn-warning btn-lg">Add new product</button>
-                    </div>
-                </main>
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <h2 class="selected-text-color">Products</h2>
+    <div class="table-responsive small">
+        <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+                <th class="selected-text-color" scope="col">Product ID</th>
+                <th class="selected-text-color" scope="col">Category</th>
+                <th class="selected-text-color" scope="col">Name</th>
+                <th class="selected-text-color" scope="col">Price</th>
+                <th class="selected-text-color" scope="col">Image</th>
+                <th class="selected-text-color" scope="col">Description</th>
+                <th class="selected-text-color" scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+            <tr data-bs-toggle="modal" data-bs-target="#product{{ product.id }}-modal">
+                <td class="ps-2">{{ product.id }}</td>
+                <td id="product{{ product.id }}-category">{{ product.category }}</td>
+                <td id="product{{ product.id }}-name">{{ product.name }}</td>
+                <td id="product{{ product.id }}-price">£{{ (product.price/100)|round(2) }}</td>
+                <td id="product{{ product.id }}-image"><img src="{{ product.image_url }}"
+                         class="item-img rounded"
+                         alt="product image"
+                         style="width: 120px; height: 120px;"></td>
+                <td class="col-4" id="product{{ product.id }}-description">{{ product.description }}</td>
+                <td>
+                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50">
+                        {% if product.visibility %}
+                        <i class="fa-solid fa-eye-slash" style="color: #ff7a00;"></i>
+                        {% else %}
+                        <i class="fa-solid fa-eye" style="color: #ff7a00;"></i>
+                        {% endif %}
+                    </button>
+                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50" data-bs-target="#product{{ product.id }}-modal"><i class="fa-solid fa-pencil" style="color: #ff7a00;"></i></button>
+                    <button class="btn btn-outline-warning me-4 d-block w-50"><i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i></button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a class="main-text-color btn btn-warning btn-lg" href="{{ url_for('add_item') }}">Add new product</a>
+    </div>
+</main>
+
+{% for product in products %}
+<div class="modal fade" id="product{{ product.id }}-modal" tabindex="-1" aria-labelledby="phone" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title selected-text-color">{{ product.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label for="name" class="form-label">Name of the product:</label>
+                <input type="text" class="form-control" id="name" value="{{ product.name }}" >
+                <label for="price" class="form-label">Price, £:</label>
+                <input type="text" class="form-control" id="price" value="{{ (product.price/100)|round(2) }}" >
+                <label for="image" class="form-label">Image URL:</label>
+                <input type="text" class="form-control" id="image" value="{{ product.image_url }}" >
+                <label for="description" class="form-label">Description:</label>
+                <textarea class="form-control" rows="10" id="description">{{ product.description }}</textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn selected-text-color btn-outline-warning" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn main-text-color btn-warning" data-bs-dismiss="modal" onclick="saveProductChanges({{ product.id }})">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 {% include "admin_panel/admin_panel_footer.html" %}

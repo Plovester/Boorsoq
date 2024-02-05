@@ -1,0 +1,11 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% include "admin_panel/admin_panel_header.html" %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        {{ render_form(form, novalidate=True, button_map={"add": "warning"}) }}
+      </div>
+
+</main>
+
+{% include "admin_panel/admin_panel_footer.html" %}

@@ -38,6 +38,7 @@ class Item(db.Model):
     price = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(2000), nullable=False)
+    visibility = db.Column(db.Boolean, nullable=False)
     order_item = relationship("OrderItem", uselist=False, back_populates="item")
 
 
@@ -211,15 +212,16 @@ def add_item():
                 name=add_item_form.name.data,
                 price=int(add_item_form.price.data * 100),
                 image_url=add_item_form.image_url.data,
-                description=add_item_form.description.data
+                description=add_item_form.description.data,
+                visibility=add_item_form.visibility.data
             )
 
             db.session.add(new_item)
             db.session.commit()
 
-            return redirect(url_for('home'))
+            return redirect(url_for('admin_panel_products'))
 
-    return render_template("new_item.html", form=add_item_form)
+    return render_template("admin_panel/new_item.html", form=add_item_form)
 
 
 @app.route('/basket', methods=["GET", "POST"])
@@ -423,6 +425,26 @@ def change_order_status(order_id):
     db.session.commit()
 
     return "Success", 204
+
+
+@app.route('/products/<int:product_id>', methods=['PUT'])
+@login_required
+def edit_product_params(product_id):
+    new_product_data = request.get_json()
+    print(new_product_data)
+
+    db.session.query(Item).filter(Item.id == product_id).update(new_product_data, synchronize_session=False)
+    db.session.commit()
+
+    product = Item.query.filter_by(id=product_id).first()
+    product_data = {
+        'name': product.name,
+        'price': product.price,
+        'image_url': product.image_url,
+        'description': product.description
+    }
+
+    return jsonify(product_data)
 
 
 if __name__ == "__main__":
