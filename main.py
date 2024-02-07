@@ -3,8 +3,9 @@ from flask_login import UserMixin, login_user, LoginManager, current_user, logou
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_bootstrap import Bootstrap5
+from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
-from forms import RegisterForm, LoginForm, AddNewItemForm
+from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 from datetime import date
 import os
 
@@ -14,7 +15,9 @@ app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 db = SQLAlchemy()
+migrate = Migrate(app,  db, command='migrate')
 db.init_app(app)
+migrate.init_app(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -30,16 +33,24 @@ class User(UserMixin, db.Model):
     orders = relationship("Order", back_populates="user")
 
 
+class Category(db.Model):
+    __tablename__ = "categories"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    items = relationship("Item", back_populates="category")
+
+
 class Item(db.Model):
     __tablename__ = "items"
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(100), nullable=False)
+    category = relationship("Category", back_populates="items")
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
     name = db.Column(db.String(100), unique=True, nullable=False)
     price = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(2000), nullable=False)
     visibility = db.Column(db.Boolean, nullable=False)
-    order_item = relationship("OrderItem", uselist=False, back_populates="item")
+    order_items = relationship("OrderItem", uselist=False, back_populates="item")
 
 
 class OrderItem(db.Model):
@@ -47,7 +58,7 @@ class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    item = relationship("Item", back_populates="order_item")
+    item = relationship("Item", back_populates="order_items")
     item_id = db.Column(db.Integer, db.ForeignKey("items.id"))
     order = relationship("Order", back_populates="order_items")
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"))
@@ -67,6 +78,13 @@ class Order(db.Model):
 
 with app.app_context():
     db.create_all()
+
+
+@app.route('/')
+def home():
+    items = db.session.execute(db.select(Item)).scalars().all()
+
+    return render_template("index.html", items=items)
 
 
 @login_manager.user_loader
@@ -194,21 +212,37 @@ def orders_history(user_id):
     return render_template("user_orders_history.html", orders=reversed_orders_list)
 
 
-@app.route('/')
-def home():
-    items = db.session.execute(db.select(Item)).scalars().all()
+@app.route('/add_category', methods=["GET", "POST"])
+@login_required
+def add_category():
+    add_category_form = AddNewCategoryForm()
 
-    return render_template("index.html", items=items)
+    if request.method == "POST":
+        if add_category_form.validate_on_submit():
+            new_category = Category(
+                name=add_category_form.name.data,
+            )
+
+            db.session.add(new_category)
+            db.session.commit()
+
+            return redirect(url_for('admin_panel_products'))
+
+    return render_template("admin_panel/new_item_or_category.html", form=add_category_form)
 
 
 @app.route('/add_item', methods=["GET", "POST"])
+@login_required
 def add_item():
+    categories = db.session.execute(db.select(Category)).scalars().all()
     add_item_form = AddNewItemForm()
+    add_item_form.category.choices = sorted([category.name for category in categories])
 
     if request.method == "POST":
         if add_item_form.validate_on_submit():
+            category = Category.query.filter_by(name=add_item_form.category.data).first()
             new_item = Item(
-                category=add_item_form.category.data,
+                category_id=category.id,
                 name=add_item_form.name.data,
                 price=int(add_item_form.price.data * 100),
                 image_url=add_item_form.image_url.data,
@@ -221,10 +255,11 @@ def add_item():
 
             return redirect(url_for('admin_panel_products'))
 
-    return render_template("admin_panel/new_item.html", form=add_item_form)
+    return render_template("admin_panel/new_item_or_category.html", form=add_item_form)
 
 
 @app.route('/basket', methods=["GET", "POST"])
+@login_required
 def show_basket():
     if session.get('cart'):
         cart = session['cart']
@@ -255,6 +290,7 @@ def show_basket():
 
 
 @app.route('/cart/add_item', methods=['POST'])
+@login_required
 def add_item_to_cart():
     item_data = request.get_json()
 
@@ -277,6 +313,7 @@ def add_item_to_cart():
 
 
 @app.route('/cart/adjust_item_qty', methods=['PUT'])
+@login_required
 def adjust_item_qty():
     qty_data = request.get_json()
 
@@ -301,6 +338,7 @@ def adjust_item_qty():
 
 
 @app.route('/cart/remove_item', methods=['DELETE'])
+@login_required
 def remove_item():
     item_id = request.get_json()
 
@@ -320,6 +358,7 @@ def remove_item():
 
 
 @app.route('/checkout', methods=["GET", "POST"])
+@login_required
 def checkout():
     cart = session['cart']
     total_price = session['total_price_cart']
@@ -342,6 +381,7 @@ def checkout():
 
 
 @app.route('/confirm_order', methods=["POST"])
+@login_required
 def confirm_order():
     ready_by_date = request.get_json()
     cart = session['cart']
@@ -389,8 +429,9 @@ def admin_panel():
 @login_required
 def admin_panel_products():
     products = db.session.execute(db.select(Item)).scalars().all()
+    categories = db.session.execute(db.select(Category)).scalars().all()
 
-    return render_template("admin_panel/admin_panel_products.html", products=products)
+    return render_template("admin_panel/admin_panel_products.html", products=products, categories=categories)
 
 
 @app.route('/customers')
@@ -431,7 +472,6 @@ def change_order_status(order_id):
 @login_required
 def edit_product_params(product_id):
     new_product_data = request.get_json()
-    print(new_product_data)
 
     db.session.query(Item).filter(Item.id == product_id).update(new_product_data, synchronize_session=False)
     db.session.commit()
