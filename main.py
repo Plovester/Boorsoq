@@ -481,7 +481,8 @@ def edit_product_params(product_id):
         'name': product.name,
         'price': product.price,
         'image_url': product.image_url,
-        'description': product.description
+        'description': product.description,
+        'visibility': product.visibility
     }
 
     return jsonify(product_data)

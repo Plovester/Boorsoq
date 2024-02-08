@@ -17,7 +17,7 @@
             </thead>
             <tbody>
             {% for product in products %}
-            <tr data-bs-toggle="modal" data-bs-target="#product{{ product.id }}-modal">
+            <tr>
                 <td class="ps-2">{{ product.id }}</td>
                 <td id="product{{ product.id }}-category">{{ product.category.name }}</td>
                 <td id="product{{ product.id }}-name">{{ product.name }}</td>
@@ -28,14 +28,14 @@
                          style="width: 120px; height: 120px;"></td>
                 <td class="col-4" id="product{{ product.id }}-description">{{ product.description }}</td>
                 <td>
-                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto">
+                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto" id="product{{ product.id }}-visibility">
                         {% if product.visibility %}
                         <i class="fa-solid fa-eye-slash" style="color: #ff7a00;"></i>
                         {% else %}
                         <i class="fa-solid fa-eye" style="color: #ff7a00;"></i>
                         {% endif %}
                     </button>
-                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto" data-bs-target="#product{{ product.id }}-modal"><i class="fa-solid fa-pencil" style="color: #ff7a00;"></i></button>
+                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto" data-bs-toggle="modal" data-bs-target="#product{{ product.id }}-modal"><i class="fa-solid fa-pencil" style="color: #ff7a00;"></i></button>
                     <button class="btn btn-outline-warning me-4 d-block w-50 mx-auto"><i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i></button>
                 </td>
             </tr>
@@ -89,12 +89,16 @@
             <div class="modal-body">
                 <label for="name" class="form-label">Name of the product:</label>
                 <input type="text" class="form-control" id="name" value="{{ product.name }}" >
-                <label for="price" class="form-label">Price, £:</label>
+                <label for="price" class="form-label mt-2">Price, £:</label>
                 <input type="text" class="form-control" id="price" value="{{ (product.price/100)|round(2) }}" >
-                <label for="image" class="form-label">Image URL:</label>
+                <label for="image" class="form-label mt-2">Image URL:</label>
                 <input type="text" class="form-control" id="image" value="{{ product.image_url }}" >
-                <label for="description" class="form-label">Description:</label>
+                <label for="description" class="form-label mt-2">Description:</label>
                 <textarea class="form-control" rows="10" id="description">{{ product.description }}</textarea>
+                <div class="form-check form-switch mt-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="visibility" checked="">
+                    <label class="form-check-label" for="visibility">Visibility</label>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn selected-text-color btn-outline-warning" data-bs-dismiss="modal">Close</button>

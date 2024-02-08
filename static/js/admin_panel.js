@@ -23,12 +23,16 @@ function saveProductChanges(id) {
     const price = document.querySelector(`#product${id}-modal #price`).value
     const image_url = document.querySelector(`#product${id}-modal #image`).value
     const description = document.querySelector(`#product${id}-modal #description`).value
+    const visibility = document.querySelector(`#product${id}-modal .form-check #visibility`).checked
+
+    console.log(visibility)
 
     const newProductParams = {
                         name: name,
                         price: Math.round(price * 100),
                         image_url: image_url,
-                        description: description
+                        description: description,
+                        visibility: visibility
                     }
 
     let response = fetch(`/products/${id}`, {
@@ -58,5 +62,12 @@ function saveProductChanges(id) {
 
         let description = document.getElementById(`product${id}-description`);
         description.innerHTML = data.description;
+
+        let visibility = document.getElementById(`product${id}-visibility`)
+        if (data.visibility) {
+            visibility.innerHTML = `<i class="fa-solid fa-eye-slash" style="color: #ff7a00;"></i>`
+        } else {
+            visibility.innerHTML = `<i class="fa-solid fa-eye" style="color: #ff7a00;"></i>`
+        }
     })
 }

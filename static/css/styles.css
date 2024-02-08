@@ -64,3 +64,31 @@ input {
     }
 }
 
+.form-check-input:checked {
+    border-color: #ffc107 !important;
+    background-color: #ffc107 !important;
+}
+
+.form-check-input:focus, .form-check-label::before {
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
+}
+
+.form-check-label::before {
+  border-color: #ffc107 !important;
+  background-color: #ffc107 !important;
+}
+
+.form-check-input:active, .form-check-label::before {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+}
+
+.form-check-input:focus:not(:checked), .form-check-label::before {
+  border-color: #ffc107 !important;
+}
+
+.form-check-input:not(:disabled):active~.form-check-label::before {
+  background-color: red !important;
+  border-color: #ffc107 !important;
+}
