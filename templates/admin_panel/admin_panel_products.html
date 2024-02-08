@@ -28,15 +28,24 @@
                          style="width: 120px; height: 120px;"></td>
                 <td class="col-4" id="product{{ product.id }}-description">{{ product.description }}</td>
                 <td>
-                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto" id="product{{ product.id }}-visibility">
+                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto"
+                            id="product{{ product.id }}-visibility"
+                            data-visibility="{{ product.visibility|int }}"
+                            onclick="changeProductVisibility(this, {{ product.id }})">
                         {% if product.visibility %}
                         <i class="fa-solid fa-eye-slash" style="color: #ff7a00;"></i>
                         {% else %}
                         <i class="fa-solid fa-eye" style="color: #ff7a00;"></i>
                         {% endif %}
                     </button>
-                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto" data-bs-toggle="modal" data-bs-target="#product{{ product.id }}-modal"><i class="fa-solid fa-pencil" style="color: #ff7a00;"></i></button>
-                    <button class="btn btn-outline-warning me-4 d-block w-50 mx-auto"><i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i></button>
+                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto"
+                            data-bs-toggle="modal"
+                            data-bs-target="#product{{ product.id }}-modal">
+                        <i class="fa-solid fa-pencil" style="color: #ff7a00;"></i>
+                    </button>
+                    <button class="btn btn-outline-warning me-4 d-block w-50 mx-auto">
+                        <i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i>
+                    </button>
                 </td>
             </tr>
             {% endfor %}
@@ -67,8 +76,13 @@
                     {% endfor %}
                 </td>
                 <td>
-                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-25 mx-auto" data-bs-target="#categiry{{ category.id }}-modal"><i class="fa-solid fa-pencil" style="color: #ff7a00;"></i></button>
-                    <button class="btn btn-outline-warning me-4 d-block w-25 mx-auto"><i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i></button>
+                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-25 mx-auto"
+                            data-bs-target="#categiry{{ category.id }}-modal">
+                        <i class="fa-solid fa-pencil" style="color: #ff7a00;"></i>
+                    </button>
+                    <button class="btn btn-outline-warning me-4 d-block w-25 mx-auto">
+                        <i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i>
+                    </button>
                 </td>
             </tr>
             {% endfor %}
@@ -101,8 +115,15 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn selected-text-color btn-outline-warning" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn main-text-color btn-warning" data-bs-dismiss="modal" onclick="saveProductChanges({{ product.id }})">Save changes</button>
+                <button type="button" class="btn selected-text-color btn-outline-warning"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
+                <button type="button" class="btn main-text-color btn-warning"
+                        data-bs-dismiss="modal"
+                        onclick="saveProductChanges({{ product.id }})">
+                    Save changes
+                </button>
             </div>
         </div>
     </div>

@@ -25,8 +25,6 @@ function saveProductChanges(id) {
     const description = document.querySelector(`#product${id}-modal #description`).value
     const visibility = document.querySelector(`#product${id}-modal .form-check #visibility`).checked
 
-    console.log(visibility)
-
     const newProductParams = {
                         name: name,
                         price: Math.round(price * 100),
@@ -71,3 +69,31 @@ function saveProductChanges(id) {
         }
     })
 }
+
+function changeProductVisibility(element, id) {
+    let response = fetch(`/products/${id}`, {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({visibility: !(+element.dataset.visibility)})
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json()
+        } else {
+            throw new Error('Request failed');
+        }
+    })
+    .then(data => {
+        element.dataset.visibility = `${+data.visibility}`
+
+        if (data.visibility) {
+            element.innerHTML = `<i class="fa-solid fa-eye-slash" style="color: #ff7a00;"></i>`
+        } else {
+            element.innerHTML = `<i class="fa-solid fa-eye" style="color: #ff7a00;"></i>`
+        }
+    })
+}
+
