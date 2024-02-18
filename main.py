@@ -3,6 +3,7 @@ from flask_login import login_user, LoginManager, current_user, logout_user, log
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from flask_migrate import Migrate
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
@@ -19,6 +20,8 @@ login_manager.init_app(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 db = SQLAlchemy()
 db.init_app(app)
+
+migrate = Migrate(app, db)
 
 
 class User(UserMixin, db.Model):
@@ -73,10 +76,6 @@ class Order(db.Model):
     total_price = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(250), nullable=False)
     order_items = relationship("OrderItem", back_populates="order")
-
-
-with app.app_context():
-    db.create_all()
 
 
 @app.route('/')
