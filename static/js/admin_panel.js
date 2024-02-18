@@ -97,3 +97,31 @@ function changeProductVisibility(element, id) {
     })
 }
 
+//function deleteProduct(id) {
+//    let response = fetch(`/deletion/${id}`, {
+//        method: 'PUT',
+//        mode: 'cors',
+//        headers: {
+//            'Content-Type': 'application/json'
+//        },
+//        body: JSON.stringify(id)
+//    })
+//    .then(response => {
+//        if (response.ok) {
+//            return response
+//        } else {
+//            throw new Error('Request failed');
+//        }
+//    })
+//    .then(data => {
+//        console.log(data)
+//        element.dataset.visibility = `${+data.visibility}`
+//
+//        if (data.visibility) {
+//            element.innerHTML = `<i class="fa-solid fa-eye-slash" style="color: #ff7a00;"></i>`
+//        } else {
+//            element.innerHTML = `<i class="fa-solid fa-eye" style="color: #ff7a00;"></i>`
+//        }
+//    })
+//}
+

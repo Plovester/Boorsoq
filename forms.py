@@ -3,10 +3,6 @@ from wtforms import StringField, PasswordField, SubmitField, SelectField, Decima
 from wtforms.validators import DataRequired, URL
 
 
-# CATEGORIES_CHOICES = ['Biscuit', 'Bread', 'Brownie', 'Bun', 'Cake', 'Cheesecake', 'Cupcake', 'Donut',
-#                       'Loaf', 'Pastry', 'Pie', 'Pudding', 'Tart']
-
-
 class RegisterForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("E-mail", validators=[DataRequired()])

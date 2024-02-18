@@ -1,0 +1,31 @@
+{% include "header.html" %}
+
+<main class="mb-4">
+    <div class="container">
+        <div class="indentation-from-top row">
+            <div class="col-12 order-md-last">
+                <h4 class="mb-3">
+                    <span class="selected-text-color">Sorry, this item is currently unavailable</span>
+                </h4>
+                <div class="card border-warning mb-3 main-text-color" style="max-width: 540px;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{{ item.item_image_url }}" class="img-fluid rounded-start" alt="Image for {{ item.item_name }}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item.item_name }}</h5>
+                                <p class="card-text">Qty: {{ item.item_qty }}</p>
+                                <p class="card-text">Price: £{{ item.item_price/100 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="main-text-color btn btn-warning" href="{{ url_for('show_basket') }}">Return to the cart</a>
+                <a class="main-text-color btn btn-warning" href="{{ url_for('checkout') }}">Continue checkout</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include "footer.html" %}

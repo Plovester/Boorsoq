@@ -25,7 +25,7 @@
                 <td id="product{{ product.id }}-image"><img src="{{ product.image_url }}"
                          class="item-img rounded"
                          alt="product image"
-                         style="width: 120px; height: 120px;"></td>
+                         style="width: 120px; height: 120px; {% if product.deleted_at %} filter: grayscale(1); {% endif %}"></td>
                 <td class="col-4" id="product{{ product.id }}-description">{{ product.description }}</td>
                 <td>
                     <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto"
@@ -43,9 +43,12 @@
                             data-bs-target="#product{{ product.id }}-modal">
                         <i class="fa-solid fa-pencil" style="color: #ff7a00;"></i>
                     </button>
-                    <button class="btn btn-outline-warning me-4 d-block w-50 mx-auto">
-                        <i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i>
-                    </button>
+                    <form action="{{ url_for('delete_product', product_id=product.id) }}" method = "POST">
+                        <button class="btn btn-outline-warning me-4 d-block w-50 mx-auto"
+                                type="submit">
+                            <i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i>
+                        </button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}
@@ -72,7 +75,9 @@
                 <td id="category{{ category.id }}-name">{{ category.name }}</td>
                 <td>
                     {% for item in category.items %}
+                    {% if item.deleted_at == None %}
                     {{ item.name }}<br>
+                    {% endif %}
                     {% endfor %}
                 </td>
                 <td>

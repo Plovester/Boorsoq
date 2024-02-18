@@ -1,9 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
-from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
+from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from flask_bootstrap import Bootstrap5
-from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 from datetime import date
@@ -13,14 +13,12 @@ app = Flask(__name__)
 Bootstrap5(app)
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
-db = SQLAlchemy()
-migrate = Migrate(app,  db, command='migrate')
-db.init_app(app)
-migrate.init_app(app, db)
-
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
+db = SQLAlchemy()
+db.init_app(app)
 
 
 class User(UserMixin, db.Model):
@@ -45,11 +43,12 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     category = relationship("Category", back_populates="items")
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
-    name = db.Column(db.String(100), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(2000), nullable=False)
     visibility = db.Column(db.Boolean, nullable=False)
+    deleted_at = db.Column(db.DateTime)
     order_items = relationship("OrderItem", uselist=False, back_populates="item")
 
 
@@ -365,17 +364,39 @@ def checkout():
     total_qty = session['total_qty_cart']
 
     cart_items = []
+
     for item in cart:
         db_item = Item.query.get(item["item_id"])
-        new_item = {
-            "item_id": db_item.id,
-            "item_name": db_item.name,
-            "item_price": db_item.price,
-            "item_qty": item["item_qty"],
-            "item_total_price": db_item.price * item["item_qty"],
-            "item_image_url": db_item.image_url
-        }
-        cart_items.append(new_item)
+        if db_item.deleted_at:
+            deleted_item = {
+                "item_id": db_item.id,
+                "item_name": db_item.name,
+                "item_price": db_item.price,
+                "item_qty": item["item_qty"],
+                "item_total_price": db_item.price * item["item_qty"],
+                "item_image_url": db_item.image_url
+            }
+
+            cart.remove(item)
+            session['cart'] = cart
+
+            total_qty -= deleted_item["item_qty"]
+            session['total_qty_cart'] = total_qty
+
+            total_price -= deleted_item["item_total_price"]
+            session['total_price_cart'] = total_price
+
+            return render_template("unavailable_item.html", item=deleted_item)
+        else:
+            new_item = {
+                "item_id": db_item.id,
+                "item_name": db_item.name,
+                "item_price": db_item.price,
+                "item_qty": item["item_qty"],
+                "item_total_price": db_item.price * item["item_qty"],
+                "item_image_url": db_item.image_url
+            }
+            cart_items.append(new_item)
 
     return render_template("checkout.html", cart_items=cart_items, total_qty=total_qty, total_price=total_price)
 
@@ -428,10 +449,13 @@ def admin_panel():
 @app.route('/products')
 @login_required
 def admin_panel_products():
-    products = db.session.execute(db.select(Item)).scalars().all()
+    products = Item.query.filter_by(deleted_at=None)
+
     categories = db.session.execute(db.select(Category)).scalars().all()
 
-    return render_template("admin_panel/admin_panel_products.html", products=products, categories=categories)
+    return render_template("admin_panel/admin_panel_products.html",
+                           products=products,
+                           categories=categories)
 
 
 @app.route('/customers')
@@ -486,6 +510,18 @@ def edit_product_params(product_id):
     }
 
     return jsonify(product_data)
+
+
+@app.route('/deletion/<int:product_id>', methods=['POST'])
+@login_required
+def delete_product(product_id):
+    if request.method == 'POST':
+        deleted_at = date.today()
+        db.session.query(Item).filter(Item.id == product_id).update({'deleted_at': deleted_at, 'visibility': 0},
+                                                                    synchronize_session=False)
+        db.session.commit()
+
+        return redirect(url_for('admin_panel_products'))
 
 
 if __name__ == "__main__":
