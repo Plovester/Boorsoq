@@ -364,39 +364,39 @@ def checkout():
     total_qty = session['total_qty_cart']
 
     cart_items = []
+    deleted_items = []
 
     for item in cart:
         db_item = Item.query.get(item["item_id"])
+
+        current_item = {
+            "item_id": db_item.id,
+            "item_name": db_item.name,
+            "item_price": db_item.price,
+            "item_qty": item["item_qty"],
+            "item_total_price": db_item.price * item["item_qty"],
+            "item_image_url": db_item.image_url
+        }
+
         if db_item.deleted_at:
-            deleted_item = {
-                "item_id": db_item.id,
-                "item_name": db_item.name,
-                "item_price": db_item.price,
-                "item_qty": item["item_qty"],
-                "item_total_price": db_item.price * item["item_qty"],
-                "item_image_url": db_item.image_url
-            }
+            deleted_items.append(current_item)
+        else:
+            cart_items.append(current_item)
 
-            cart.remove(item)
-            session['cart'] = cart
+    if len(deleted_items) > 0:
+        for product in deleted_items:
+            for item in cart:
+                if product['item_id'] == item['item_id']:
+                    cart.remove(item)
+                    session['cart'] = cart
 
-            total_qty -= deleted_item["item_qty"]
+            total_qty -= product["item_qty"]
             session['total_qty_cart'] = total_qty
 
-            total_price -= deleted_item["item_total_price"]
+            total_price -= product["item_total_price"]
             session['total_price_cart'] = total_price
 
-            return render_template("unavailable_item.html", item=deleted_item)
-        else:
-            new_item = {
-                "item_id": db_item.id,
-                "item_name": db_item.name,
-                "item_price": db_item.price,
-                "item_qty": item["item_qty"],
-                "item_total_price": db_item.price * item["item_qty"],
-                "item_image_url": db_item.image_url
-            }
-            cart_items.append(new_item)
+        return render_template("unavailable_items.html", items=deleted_items)
 
     return render_template("checkout.html", cart_items=cart_items, total_qty=total_qty, total_price=total_price)
 
