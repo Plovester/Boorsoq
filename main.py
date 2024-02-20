@@ -233,7 +233,7 @@ def add_category():
 @app.route('/add_item', methods=["GET", "POST"])
 @login_required
 def add_item():
-    categories = db.session.execute(db.select(Category)).scalars().all()
+    categories = Category.query.filter_by(deleted_at=None)
     add_item_form = AddNewItemForm()
     add_item_form.category.choices = sorted([category.name for category in categories])
 
@@ -451,10 +451,16 @@ def admin_panel():
 def admin_panel_products():
     products = Item.query.filter_by(deleted_at=None)
 
-    categories = db.session.execute(db.select(Category)).scalars().all()
-
     return render_template("admin_panel/admin_panel_products.html",
-                           products=products,
+                           products=products)
+
+
+@app.route('/categories')
+@login_required
+def admin_panel_categories():
+    categories = Category.query.filter_by(deleted_at=None)
+
+    return render_template("admin_panel/admin_panel_categories.html",
                            categories=categories)
 
 
@@ -512,16 +518,36 @@ def edit_product_params(product_id):
     return jsonify(product_data)
 
 
-@app.route('/deletion/<int:product_id>', methods=['POST'])
+@app.route('/deletion_product/<int:product_id>', methods=['POST'])
 @login_required
 def delete_product(product_id):
     if request.method == 'POST':
         deleted_at = date.today()
-        db.session.query(Item).filter(Item.id == product_id).update({'deleted_at': deleted_at, 'visibility': 0},
+        db.session.query(Item).filter(Item.id == product_id).update({'deleted_at': deleted_at,
+                                                                     'visibility': 0,
+                                                                     'category_id': None},
                                                                     synchronize_session=False)
         db.session.commit()
 
         return redirect(url_for('admin_panel_products'))
+
+
+@app.route('/deletion_category/<int:category_id>', methods=['POST'])
+@login_required
+def delete_category(category_id):
+    if request.method == 'POST':
+        deleted_at = date.today()
+
+        category = Category.query.filter_by(id=category_id).first()
+
+        if len(category.items) > 0:
+            return render_template("admin_panel/admin_panel_category_for_deletion.html", category=category)
+        else:
+            db.session.query(Category).filter(Category.id == category_id).update({'deleted_at': deleted_at},
+                                                                                 synchronize_session=False)
+            db.session.commit()
+
+        return redirect(url_for('admin_panel_categories'))
 
 
 if __name__ == "__main__":

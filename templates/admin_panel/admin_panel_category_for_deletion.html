@@ -1,0 +1,41 @@
+{% include "admin_panel/admin_panel_header.html" %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <h2 class="selected-text-color mt-5">Oops!</h2>
+    <p>Sorry, you cannot delete the category {{ category.name }}. There are some related products</p>
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th class="selected-text-color" scope="col">Product ID</th>
+                <th class="selected-text-color" scope="col">Name</th>
+                <th class="selected-text-color" scope="col">Image</th>
+                <th class="selected-text-color" scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in category.items %}
+            <tr>
+                <td class="ps-2">{{ product.id }}</td>
+                <td id="product{{ product.id }}-name">{{ product.name }}</td>
+                <td id="product{{ product.id }}-image"><img src="{{ product.image_url }}"
+                         class="item-img rounded"
+                         alt="product image"
+                         style="width: 120px; height: 120px; {% if product.deleted_at %} filter: grayscale(1); {% endif %}">
+                </td>
+                <td>
+                    <form action="{{ url_for('delete_product', product_id=product.id) }}" method = "POST">
+                        <button class="btn btn-outline-warning me-4 d-block w-50 mx-auto"
+                                type="submit">
+                            <i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a class="main-text-color btn btn-warning btn-lg" href="{{ url_for('admin_panel_categories') }}">Return to category list</a>
+    <a class="main-text-color btn btn-warning btn-lg" href="{{ url_for('admin_panel_products') }}">Go to product list</a>
+</main>
+
+{% include "admin_panel/admin_panel_footer.html" %}

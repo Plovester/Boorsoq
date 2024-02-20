@@ -1,0 +1,47 @@
+{% include "admin_panel/admin_panel_header.html" %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <h2 class="selected-text-color">Categories</h2>
+    <div class="table-responsive small">
+        <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+                <th class="selected-text-color" scope="col">Category ID</th>
+                <th class="selected-text-color" scope="col">Name</th>
+                <th class="selected-text-color" scope="col">Products</th>
+                <th class="selected-text-color" scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for category in categories %}
+            <tr data-bs-toggle="modal" data-bs-target="#categiry{{ category.id }}-modal">
+                <td class="ps-2">{{ category.id }}</td>
+                <td id="category{{ category.id }}-name">{{ category.name }}</td>
+                <td>
+                    {% for item in category.items %}
+                    {% if item.deleted_at == None %}
+                    {{ item.name }}<br>
+                    {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-25 mx-auto"
+                            data-bs-target="#categiry{{ category.id }}-modal">
+                        <i class="fa-solid fa-pencil" style="color: #ff7a00;"></i>
+                    </button>
+                    <form action="{{ url_for('delete_category', category_id=category.id) }}" method = "POST">
+                        <button class="btn btn-outline-warning me-4 d-block w-25 mx-auto"
+                                type="submit">
+                            <i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a class="main-text-color btn btn-warning btn-lg" href="{{ url_for('add_category') }}">Add new category</a>
+    </div>
+</main>
+
+{% include "admin_panel/admin_panel_footer.html" %}
