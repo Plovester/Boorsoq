@@ -532,6 +532,19 @@ def delete_product(product_id):
         return redirect(url_for('admin_panel_products'))
 
 
+@app.route('/categories/<int:category_id>', methods=['PUT'])
+@login_required
+def edit_category_params(category_id):
+    new_category_data = request.get_json()
+
+    db.session.query(Category).filter(Category.id == category_id).update(new_category_data, synchronize_session=False)
+    db.session.commit()
+
+    category_name = Category.query.filter_by(id=category_id).first().name
+
+    return jsonify(category_name)
+
+
 @app.route('/deletion_category/<int:category_id>', methods=['POST'])
 @login_required
 def delete_category(category_id):

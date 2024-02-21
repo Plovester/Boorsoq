@@ -96,3 +96,27 @@ function changeProductVisibility(element, id) {
         }
     })
 }
+
+function saveCategoryChanges(id) {
+    const name = document.querySelector(`#category${id}-modal #name`).value
+
+    let response = fetch(`/categories/${id}`, {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({name: name})
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json()
+        } else {
+            throw new Error('Request failed');
+        }
+    })
+    .then(data => {
+        let name = document.getElementById(`category${id}-name`);
+        name.innerHTML = data;
+    })
+}
