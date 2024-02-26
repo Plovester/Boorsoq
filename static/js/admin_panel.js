@@ -20,6 +20,7 @@ function changeOrderStatus(id) {
 
 function saveProductChanges(id) {
     const name = document.querySelector(`#product${id}-modal #name`).value
+    const category_id = document.querySelector(`#product${id}-modal #category`).value
     const price = document.querySelector(`#product${id}-modal #price`).value
     const image_url = document.querySelector(`#product${id}-modal #image`).value
     const description = document.querySelector(`#product${id}-modal #description`).value
@@ -27,6 +28,7 @@ function saveProductChanges(id) {
 
     const newProductParams = {
                         name: name,
+                        category_id: category_id,
                         price: Math.round(price * 100),
                         image_url: image_url,
                         description: description,
@@ -51,6 +53,9 @@ function saveProductChanges(id) {
     .then(data => {
         let name = document.getElementById(`product${id}-name`);
         name.innerHTML = data.name;
+
+        let category = document.getElementById(`product${id}-category`);
+        category.innerHTML = data.category;
 
         let price = document.getElementById(`product${id}-price`);
         price.innerHTML = `£${(data.price / 100).toFixed(1)}`;

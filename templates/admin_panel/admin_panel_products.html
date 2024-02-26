@@ -67,6 +67,15 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <label for="category" class="form-label">Category:</label>
+                <select class="form-select" aria-label="Default select example" id="category">
+                    {% for category in categories %}
+                    <option value="{{ category.id }}"
+                            {% if product.category_id == category.id %} selected {% endif %}>
+                        {{ category.name }}
+                    </option>
+                    {% endfor %}
+                </select>
                 <label for="name" class="form-label">Name of the product:</label>
                 <input type="text" class="form-control" id="name" value="{{ product.name }}" >
                 <label for="price" class="form-label mt-2">Price, £:</label>

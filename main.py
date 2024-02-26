@@ -450,9 +450,11 @@ def admin_panel():
 @login_required
 def admin_panel_products():
     products = Item.query.filter_by(deleted_at=None)
+    categories = Category.query.filter_by(deleted_at=None)
 
     return render_template("admin_panel/admin_panel_products.html",
-                           products=products)
+                           products=products,
+                           categories=categories)
 
 
 @app.route('/categories')
@@ -509,6 +511,7 @@ def edit_product_params(product_id):
     product = Item.query.filter_by(id=product_id).first()
     product_data = {
         'name': product.name,
+        'category': product.category.name,
         'price': product.price,
         'image_url': product.image_url,
         'description': product.description,
