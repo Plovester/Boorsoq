@@ -76,6 +76,7 @@ class Order(db.Model):
     ready_by_date = db.Column(db.String(250), nullable=False)
     total_price = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(250), nullable=False)
+    is_confirmed = db.Column(db.Boolean, default=False)
     order_items = relationship("OrderItem", back_populates="order")
 
 
