@@ -501,6 +501,17 @@ def change_order_status(order_id):
     return "Success", 204
 
 
+@app.route('/orders/<int:order_id>/confirmation', methods=['PUT'])
+@login_required
+def confirm_new_order(order_id):
+    confirmation = request.get_json()
+
+    db.session.query(Order).filter(Order.id == order_id).update(confirmation, synchronize_session=False)
+    db.session.commit()
+
+    return "Success", 204
+
+
 @app.route('/products/<int:product_id>', methods=['PUT'])
 @login_required
 def edit_product_params(product_id):

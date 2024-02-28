@@ -18,6 +18,26 @@ function changeOrderStatus(id) {
         })
 }
 
+function confirmOrder(id) {
+    const confirmation = document.getElementById(`confirmation${id}`).checked
+
+    let response = fetch(`/orders/${id}/confirmation`, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({is_confirmed: +confirmation})
+        })
+        .then(response => {
+            if (response.ok) {
+                return response
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+}
+
 function saveProductChanges(id) {
     const name = document.querySelector(`#product${id}-modal #name`).value
     const category_id = document.querySelector(`#product${id}-modal #category`).value

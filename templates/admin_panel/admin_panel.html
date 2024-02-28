@@ -8,6 +8,7 @@
                         <table class="table table-striped table-m text-center">
                             <thead>
                             <tr>
+                                <th class="selected-text-color" scope="col">Confirmed</th>
                                 <th class="selected-text-color" scope="col">Order ID</th>
                                 <th class="selected-text-color" scope="col">Customer ID</th>
                                 <th class="selected-text-color" scope="col">Status</th>
@@ -19,12 +20,27 @@
                             <tbody>
                             {% for order in orders %}
                             <tr>
+                                <td>
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               value=""
+                                               id="confirmation{{order.id}}"
+                                               onclick="confirmOrder({{ order.id }})"
+                                                {% if order.is_confirmed %} checked {% endif %}>
+                                    </div>
+                                </td>
                                 <td>{{ order.id }}</td>
                                 <td>{{ order.user_id }}</td>
                                 <td>
-                                    <select class="form-select p-1 px-2 w-75 m-auto" id="statusOptions{{ order.id }}" onchange="changeOrderStatus({{ order.id }})">
+                                    <select class="form-select p-1 px-2 w-75 m-auto"
+                                            id="statusOptions{{ order.id }}"
+                                            onchange="changeOrderStatus({{ order.id }})">
                                         {% for status in status_options %}
-                                            <option value="{{ status }}" {% if status ==  order.status %} selected {% endif %} >{{ status }}</option>
+                                            <option value="{{ status }}"
+                                                    {% if status ==  order.status %} selected {% endif %} >
+                                                {{ status }}
+                                            </option>
                                         {% endfor %}
                                     </select>
                                 </td>
