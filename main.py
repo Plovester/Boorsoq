@@ -226,7 +226,7 @@ def add_category():
             db.session.add(new_category)
             db.session.commit()
 
-            return redirect(url_for('admin_panel_products'))
+            return redirect(url_for('admin_panel_categories'))
 
     return render_template("admin_panel/new_item_or_category.html", form=add_category_form)
 
