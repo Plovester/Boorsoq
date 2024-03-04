@@ -113,11 +113,14 @@ function changeProductVisibility(element, id) {
     })
     .then(data => {
         element.dataset.visibility = `${+data.visibility}`
+        const visibility = document.querySelector(`#product${id}-modal .form-check #visibility`)
 
         if (data.visibility) {
             element.innerHTML = `<i class="fa-solid fa-eye-slash" style="color: #ff7a00;"></i>`
+            visibility.checked = true
         } else {
             element.innerHTML = `<i class="fa-solid fa-eye" style="color: #ff7a00;"></i>`
+            visibility.checked = false
         }
     })
 }
