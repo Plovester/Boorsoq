@@ -490,26 +490,20 @@ def admin_panel_reports():
     return render_template("admin_panel/admin_panel_reports.html")
 
 
-@app.route('/orders/<int:order_id>/status', methods=['PUT'])
+@app.route('/orders/<int:order_id>', methods=['PUT'])
 @login_required
-def change_order_status(order_id):
-    new_status = request.get_json()
+def change_order_details(order_id):
+    changes = request.get_json()
 
-    db.session.query(Order).filter(Order.id == order_id).update(new_status, synchronize_session=False)
+    db.session.query(Order).filter(Order.id == order_id).update(changes, synchronize_session=False)
     db.session.commit()
 
-    return "Success", 204
+    order = Order.query.filter_by(id=order_id).first()
+    order_data = {
+        'status': order.status
+    }
 
-
-@app.route('/orders/<int:order_id>/confirmation', methods=['PUT'])
-@login_required
-def confirm_new_order(order_id):
-    confirmation = request.get_json()
-
-    db.session.query(Order).filter(Order.id == order_id).update(confirmation, synchronize_session=False)
-    db.session.commit()
-
-    return "Success", 204
+    return jsonify(order_data)
 
 
 @app.route('/products/<int:product_id>', methods=['PUT'])

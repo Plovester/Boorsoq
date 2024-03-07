@@ -1,7 +1,7 @@
 function changeOrderStatus(id) {
-    let selected_status = document.getElementById(`statusOptions${id}`).value
+    const selected_status = document.getElementById(`statusOptions${id}`).value
 
-    let response = fetch(`/orders/${id}/status`, {
+    let response = fetch(`/orders/${id}`, {
             method: 'PUT',
             mode: 'cors',
             headers: {
@@ -11,31 +11,40 @@ function changeOrderStatus(id) {
         })
         .then(response => {
             if (response.ok) {
-                return response
+                return response.json()
             } else {
                 throw new Error('Request failed');
             }
         })
+        .then(data => {
+            let status = document.querySelector(`#order${id}-modal #status`)
+            status.value = data.status
+        })
 }
 
-function confirmOrder(id) {
-    const confirmation = document.getElementById(`confirmation${id}`).checked
+function changeOrderDetails(id) {
+    const status = document.querySelector(`#order${id}-modal #status`).value
 
-    let response = fetch(`/orders/${id}/confirmation`, {
+    let response = fetch(`/orders/${id}`, {
             method: 'PUT',
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({is_confirmed: +confirmation})
+            body: JSON.stringify({status: status})
         })
         .then(response => {
             if (response.ok) {
-                return response
+                return response.json()
             } else {
                 throw new Error('Request failed');
             }
         })
+        .then(data => {
+            let status = document.getElementById(`statusOptions${id}`)
+            status.value = data.status
+        })
+
 }
 
 function saveProductChanges(id) {
