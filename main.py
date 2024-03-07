@@ -34,6 +34,15 @@ class User(UserMixin, db.Model):
     orders = relationship("Order", back_populates="user")
 
 
+class Admin(UserMixin, db.Model):
+    __tablename__ = "admins"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime)
+
+
 class Category(db.Model):
     __tablename__ = "categories"
     id = db.Column(db.Integer, primary_key=True)
