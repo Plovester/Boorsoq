@@ -1,91 +1,13 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
-from flask_login import login_user, LoginManager, current_user, logout_user, login_required
-from flask_bootstrap import Bootstrap5
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
-from flask_migrate import Migrate
-from sqlalchemy.orm import relationship
+from flask import render_template, redirect, url_for, request, flash, session, jsonify
+from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 from datetime import date
-import os
 
-app = Flask(__name__)
-Bootstrap5(app)
-app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+from app import db, login_manager, create_app
+from models import User, Category, Item, OrderItem, Order
+from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
-db = SQLAlchemy()
-db.init_app(app)
-
-migrate = Migrate(app, db)
-
-
-class User(UserMixin, db.Model):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
-    phone_number = db.Column(db.String(20), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-    orders = relationship("Order", back_populates="user")
-
-
-class Admin(UserMixin, db.Model):
-    __tablename__ = "admins"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-    created_at = db.Column(db.DateTime)
-
-
-class Category(db.Model):
-    __tablename__ = "categories"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
-    items = relationship("Item", back_populates="category")
-    deleted_at = db.Column(db.DateTime)
-
-
-class Item(db.Model):
-    __tablename__ = "items"
-    id = db.Column(db.Integer, primary_key=True)
-    category = relationship("Category", back_populates="items")
-    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
-    name = db.Column(db.String(100), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
-    image_url = db.Column(db.String(250), nullable=False)
-    description = db.Column(db.String(2000), nullable=False)
-    visibility = db.Column(db.Boolean, nullable=False)
-    deleted_at = db.Column(db.DateTime)
-    order_items = relationship("OrderItem", uselist=False, back_populates="item")
-
-
-class OrderItem(db.Model):
-    __tablename__ = "order_items"
-    id = db.Column(db.Integer, primary_key=True)
-    price = db.Column(db.Integer, nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    item = relationship("Item", back_populates="order_items")
-    item_id = db.Column(db.Integer, db.ForeignKey("items.id"))
-    order = relationship("Order", back_populates="order_items")
-    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"))
-
-
-class Order(db.Model):
-    __tablename__ = "orders"
-    id = db.Column(db.Integer, primary_key=True)
-    user = relationship("User", back_populates="orders")
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    created_at = db.Column(db.String(250), nullable=False)
-    ready_by_date = db.Column(db.String(250), nullable=False)
-    total_price = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.String(250), nullable=False)
-    order_items = relationship("OrderItem", back_populates="order")
+app = create_app()
 
 
 @app.route('/')
