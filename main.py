@@ -3,7 +3,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
 
-from app import db, login_manager, create_app
+from app import login_manager, create_app
+from database import db
 from models import User, Category, Item, OrderItem, Order
 from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 
