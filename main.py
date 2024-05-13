@@ -1,11 +1,11 @@
-from flask import render_template, redirect, url_for, request, flash, session, jsonify
+from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
 
 from app import login_manager, create_app
 from database import db
-from models import User, Category, Item, OrderItem, Order
+from models import User, Admin, Category, Item, OrderItem, Order
 from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 
 app = create_app()
@@ -368,6 +368,32 @@ def confirm_order():
     session['total_qty_cart'] = 0
 
     return "Success", 204
+
+
+@app.route('/admin_login', methods=["GET", "POST"])
+def admin_login():
+    login_form = LoginForm()
+
+    if request.method == 'POST':
+        if login_form.validate_on_submit():
+            admin = Admin.query.filter_by(email=request.form.get('email')).first()
+
+            if admin:
+                admin_password = admin.password
+                password = login_form.password.data
+                is_password_correct = check_password_hash(admin_password, password)
+
+                if is_password_correct:
+                    login_user(admin)
+                    return redirect(url_for('admin_panel'))
+                else:
+                    flash('Your password is not correct. Try again')
+                    return redirect(url_for('admin_login'))
+            else:
+                flash('The email does not exist. Try again or register')
+                return redirect(url_for('admin_login'))
+
+    return render_template("admin_panel/admin_panel_login.html", form=login_form)
 
 
 @app.route('/orders')
