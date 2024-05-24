@@ -370,32 +370,6 @@ def confirm_order():
     return "Success", 204
 
 
-@app.route('/admin_login', methods=["GET", "POST"])
-def admin_login():
-    login_form = LoginForm()
-
-    if request.method == 'POST':
-        if login_form.validate_on_submit():
-            admin = Admin.query.filter_by(email=request.form.get('email')).first()
-
-            if admin:
-                admin_password = admin.password
-                password = login_form.password.data
-                is_password_correct = check_password_hash(admin_password, password)
-
-                if is_password_correct:
-                    login_user(admin)
-                    return redirect(url_for('admin_panel'))
-                else:
-                    flash('Your password is not correct. Try again')
-                    return redirect(url_for('admin_login'))
-            else:
-                flash('The email does not exist. Try again or register')
-                return redirect(url_for('admin_login'))
-
-    return render_template("admin_panel/admin_panel_login.html", form=login_form)
-
-
 @app.route('/orders')
 @login_required
 def admin_panel():
