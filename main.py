@@ -5,7 +5,7 @@ from datetime import date
 
 from app import login_manager, create_app
 from database import db
-from models import User, Admin, Category, Item, OrderItem, Order
+from models import User, Category, Item, OrderItem, Order
 from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 
 app = create_app()

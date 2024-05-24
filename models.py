@@ -1,6 +1,12 @@
 from flask_login import UserMixin
+from flask_security import RoleMixin
 from sqlalchemy.orm import relationship
 from database import db
+
+
+roles_users = db.Table('roles_users',
+                       db.Column("user_id", db.Integer(), db.ForeignKey("users.id")),
+                       db.Column("role_id", db.Integer(), db.ForeignKey("role.id")))
 
 
 class User(UserMixin, db.Model):
@@ -10,16 +16,15 @@ class User(UserMixin, db.Model):
     phone_number = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    roles = db.relationship('Role', secondary=roles_users, back_populates="users")
     orders = relationship("Order", back_populates="user")
 
 
-class Admin(UserMixin, db.Model):
-    __tablename__ = "admins"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-    created_at = db.Column(db.DateTime)
+class Role(RoleMixin, db.Model):
+    __tablename__ = "role"
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    users = db.relationship('User', secondary=roles_users, back_populates="roles")
 
 
 class Category(db.Model):
