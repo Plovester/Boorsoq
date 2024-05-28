@@ -6,6 +6,7 @@ from datetime import date
 from werkzeug.security import generate_password_hash
 import os
 from database import db
+from create_roles import create_roles
 
 migrate = Migrate()
 login_manager = LoginManager()
@@ -24,5 +25,8 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
+
+    with app.app_context():
+        create_roles()
 
     return app
