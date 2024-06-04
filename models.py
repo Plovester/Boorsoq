@@ -1,5 +1,4 @@
-from flask_login import UserMixin
-from flask_security import RoleMixin
+from flask_security import RoleMixin, UserMixin
 from sqlalchemy.orm import relationship
 from database import db
 
@@ -9,18 +8,19 @@ roles_users = db.Table('roles_users',
                        db.Column("role_id", db.Integer(), db.ForeignKey("role.id")))
 
 
-class User(UserMixin, db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     phone_number = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)
     roles = db.relationship('Role', secondary=roles_users, back_populates="users")
     orders = relationship("Order", back_populates="user")
 
 
-class Role(RoleMixin, db.Model):
+class Role(db.Model, RoleMixin):
     __tablename__ = "role"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True)
