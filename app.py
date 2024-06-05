@@ -3,11 +3,10 @@ from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager, login_user
 from flask_security import Security, SQLAlchemySessionUserDatastore
 from flask_migrate import Migrate
-from datetime import date
-from werkzeug.security import generate_password_hash
 import os
 from database import db
 from create_roles import create_roles
+from create_admin import create_admin
 from models import User, Role
 
 migrate = Migrate()
@@ -31,7 +30,8 @@ def create_app():
     user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
     app.security = Security(app, user_datastore)
 
-    with app.app_context():
+    with (app.app_context()):
         create_roles()
+        create_admin()
 
     return app
