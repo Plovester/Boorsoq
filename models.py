@@ -1,11 +1,6 @@
-from flask_security import RoleMixin, UserMixin
+from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 from database import db
-
-
-roles_users = db.Table('roles_users',
-                       db.Column("user_id", db.Integer(), db.ForeignKey("users.id")),
-                       db.Column("role_id", db.Integer(), db.ForeignKey("role.id")))
 
 
 class User(db.Model, UserMixin):
@@ -15,16 +10,22 @@ class User(db.Model, UserMixin):
     phone_number = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)
-    roles = db.relationship('Role', secondary=roles_users, back_populates="users")
+    roles = db.relationship("Role", secondary="user_roles")
     orders = relationship("Order", back_populates="user")
 
 
-class Role(db.Model, RoleMixin):
-    __tablename__ = "role"
+class Role(db.Model):
+    __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True)
-    users = db.relationship('User', secondary=roles_users, back_populates="roles")
+    users = db.relationship("User", secondary="user_roles")
+
+
+class UserRoles(db.Model):
+    __tablename__ = "user_roles"
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id", ondelete="CASCADE"))
+    role_id = db.Column(db.Integer(), db.ForeignKey("roles.id", ondelete="CASCADE"))
 
 
 class Category(db.Model):
