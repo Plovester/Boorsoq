@@ -5,11 +5,10 @@
   <div class="container">
     <div class="row">
       <div class="indentation-from-top col-lg-8 col-md-10 mx-auto">
-        {{ render_form(register_form, novalidate=True, button_map={"submit": "warning"}) }}
+        {{ render_form(login_form, novalidate=True, button_map={"submit": "warning"}) }}
       </div>
     </div>
   </div>
 </main>
-
 
 {% include "footer.html" %}
