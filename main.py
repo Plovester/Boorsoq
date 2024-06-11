@@ -2,12 +2,30 @@ from flask import render_template, redirect, url_for, request, flash, session, j
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
+from functools import wraps
 from app import login_manager, create_app
 from database import db
 from models import User, Role, Category, Item, OrderItem, Order
 from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 
 app = create_app()
+
+
+def admin_only(func):
+    @wraps(func)
+    def check_credentials(*args, **kwargs):
+        is_admin = False
+
+        for role in current_user.roles:
+            if role.name == "Admin":
+                is_admin = True
+
+        if is_admin:
+            return func(*args, **kwargs)
+        else:
+            return abort(403)
+
+    return check_credentials
 
 
 @app.route('/')
@@ -147,6 +165,7 @@ def orders_history(user_id):
 
 @app.route('/add_category', methods=["GET", "POST"])
 @login_required
+@admin_only
 def add_category():
     add_category_form = AddNewCategoryForm()
 
@@ -166,6 +185,7 @@ def add_category():
 
 @app.route('/add_item', methods=["GET", "POST"])
 @login_required
+@admin_only
 def add_item():
     categories = Category.query.filter_by(deleted_at=None)
     add_item_form = AddNewItemForm()
@@ -374,6 +394,7 @@ def confirm_order():
 
 @app.route('/orders')
 @login_required
+@admin_only
 def admin_panel():
     orders = db.session.execute(db.select(Order)).scalars().all()
 
@@ -382,6 +403,7 @@ def admin_panel():
 
 @app.route('/products')
 @login_required
+@admin_only
 def admin_panel_products():
     products = Item.query.filter_by(deleted_at=None)
     categories = Category.query.filter_by(deleted_at=None)
@@ -393,6 +415,7 @@ def admin_panel_products():
 
 @app.route('/categories')
 @login_required
+@admin_only
 def admin_panel_categories():
     categories = Category.query.filter_by(deleted_at=None)
 
@@ -402,6 +425,7 @@ def admin_panel_categories():
 
 @app.route('/customers')
 @login_required
+@admin_only
 def admin_panel_customers():
     users = db.session.execute(db.select(User)).scalars().all()
     customers = []
@@ -419,12 +443,14 @@ def admin_panel_customers():
 
 @app.route('/reports')
 @login_required
+@admin_only
 def admin_panel_reports():
     return render_template("admin_panel/admin_panel_reports.html")
 
 
 @app.route('/orders/<int:order_id>', methods=['PUT'])
 @login_required
+@admin_only
 def change_order_details(order_id):
     changes = request.get_json()
 
@@ -441,6 +467,7 @@ def change_order_details(order_id):
 
 @app.route('/products/<int:product_id>', methods=['PUT'])
 @login_required
+@admin_only
 def edit_product_params(product_id):
     new_product_data = request.get_json()
 
@@ -462,6 +489,7 @@ def edit_product_params(product_id):
 
 @app.route('/deletion_product/<int:product_id>', methods=['POST'])
 @login_required
+@admin_only
 def delete_product(product_id):
     if request.method == 'POST':
         deleted_at = date.today()
@@ -476,6 +504,7 @@ def delete_product(product_id):
 
 @app.route('/categories/<int:category_id>', methods=['PUT'])
 @login_required
+@admin_only
 def edit_category_params(category_id):
     new_category_data = request.get_json()
 
@@ -489,6 +518,7 @@ def edit_category_params(category_id):
 
 @app.route('/deletion_category/<int:category_id>', methods=['POST'])
 @login_required
+@admin_only
 def delete_category(category_id):
     if request.method == 'POST':
         deleted_at = date.today()
