@@ -13,8 +13,7 @@ def create_admin():
             name='admin',
             phone_number='111111',
             email='admin',
-            password=hashed_password,
-            fs_uniquifier=''
+            password=hashed_password
         )
 
         first_admin.roles.append(admin_role)

@@ -2,10 +2,9 @@ from flask import render_template, redirect, url_for, request, flash, session, j
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-
 from app import login_manager, create_app
 from database import db
-from models import User, Category, Item, OrderItem, Order
+from models import User, Role, Category, Item, OrderItem, Order
 from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 
 app = create_app()
@@ -33,6 +32,7 @@ def register():
 
             if not user:
                 if register_form.validate_on_submit():
+                    user_role = Role.query.filter_by(name='User').first()
                     hashed_password = generate_password_hash(register_form.password.data, method='pbkdf2:sha256', salt_length=8)
 
                     new_user = User(
@@ -41,6 +41,8 @@ def register():
                         email=register_form.email.data,
                         password=hashed_password
                     )
+
+                    new_user.roles.append(user_role)
 
                     db.session.add(new_user)
                     db.session.commit()
@@ -51,7 +53,7 @@ def register():
             else:
                 flash('The email has already exist. Try to log in')
                 return redirect(url_for('login'))
-        return render_template("register.html", form=register_form)
+        return render_template("register.html", register_form=register_form)
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -78,7 +80,7 @@ def login():
                     flash('The email does not exist. Try again or register')
                     return redirect(url_for('login'))
 
-    return render_template("register.html", form=login_form)
+    return render_template("login.html", login_form=login_form)
 
 
 @app.route('/logout')
