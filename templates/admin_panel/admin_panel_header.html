@@ -21,7 +21,9 @@
                             ('/products', 'admin_panel_products', 'fa-stroopwafel', 'Products'),
                             ('/categories', 'admin_panel_categories', 'fa-list', 'Categories'),
                             ('/customers', 'admin_panel_customers', 'fa-users', 'Customers'),
-                            ('/reports', 'admin_panel_reports', 'fa-chart-pie','Reports')
+                            ('/reports', 'admin_panel_reports', 'fa-chart-pie','Reports'),
+                            ('/settings', 'admin_panel_settings', 'fa-gears','Settings'),
+                            ('/logout', 'logout', 'fa-right-from-bracket','Sign out')
                         ] %}
                         {% set active_page = request.endpoint|default('admin_panel') %}
                         <ul class="nav flex-column mt-3">
@@ -34,22 +36,5 @@
                                     </a>
                                 </li>
                             {% endfor %}
-                        </ul>
-
-                        <hr class="my-3">
-
-                        <ul class="nav flex-column mb-auto">
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2 main-text-color" href="#">
-                                    <i class="fa-solid fa-gears"></i>
-                                    Settings
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2 main-text-color" href="#">
-                                    <i class="fa-solid fa-right-from-bracket"></i>
-                                    Sign out
-                                </a>
-                            </li>
                         </ul>
                     </div>
