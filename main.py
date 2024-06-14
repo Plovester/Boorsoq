@@ -163,54 +163,6 @@ def orders_history(user_id):
     return render_template("user_orders_history.html", orders=reversed_orders_list)
 
 
-@app.route('/add_category', methods=["GET", "POST"])
-@login_required
-@admin_only
-def add_category():
-    add_category_form = AddNewCategoryForm()
-
-    if request.method == "POST":
-        if add_category_form.validate_on_submit():
-            new_category = Category(
-                name=add_category_form.name.data,
-            )
-
-            db.session.add(new_category)
-            db.session.commit()
-
-            return redirect(url_for('admin_panel_categories'))
-
-    return render_template("admin_panel/new_item_or_category.html", form=add_category_form)
-
-
-@app.route('/add_item', methods=["GET", "POST"])
-@login_required
-@admin_only
-def add_item():
-    categories = Category.query.filter_by(deleted_at=None)
-    add_item_form = AddNewItemForm()
-    add_item_form.category.choices = sorted([category.name for category in categories])
-
-    if request.method == "POST":
-        if add_item_form.validate_on_submit():
-            category = Category.query.filter_by(name=add_item_form.category.data).first()
-            new_item = Item(
-                category_id=category.id,
-                name=add_item_form.name.data,
-                price=int(add_item_form.price.data * 100),
-                image_url=add_item_form.image_url.data,
-                description=add_item_form.description.data,
-                visibility=add_item_form.visibility.data
-            )
-
-            db.session.add(new_item)
-            db.session.commit()
-
-            return redirect(url_for('admin_panel_products'))
-
-    return render_template("admin_panel/new_item_or_category.html", form=add_item_form)
-
-
 @app.route('/basket', methods=["GET", "POST"])
 @login_required
 def show_basket():
@@ -413,6 +365,34 @@ def admin_panel_products():
                            categories=categories)
 
 
+@app.route('/add_item', methods=["GET", "POST"])
+@login_required
+@admin_only
+def add_item():
+    categories = Category.query.filter_by(deleted_at=None)
+    add_item_form = AddNewItemForm()
+    add_item_form.category.choices = sorted([category.name for category in categories])
+
+    if request.method == "POST":
+        if add_item_form.validate_on_submit():
+            category = Category.query.filter_by(name=add_item_form.category.data).first()
+            new_item = Item(
+                category_id=category.id,
+                name=add_item_form.name.data,
+                price=int(add_item_form.price.data * 100),
+                image_url=add_item_form.image_url.data,
+                description=add_item_form.description.data,
+                visibility=add_item_form.visibility.data
+            )
+
+            db.session.add(new_item)
+            db.session.commit()
+
+            return redirect(url_for('admin_panel_products'))
+
+    return render_template("admin_panel/new_item_or_category.html", form=add_item_form)
+
+
 @app.route('/categories')
 @login_required
 @admin_only
@@ -423,6 +403,26 @@ def admin_panel_categories():
                            categories=categories)
 
 
+@app.route('/add_category', methods=["GET", "POST"])
+@login_required
+@admin_only
+def add_category():
+    add_category_form = AddNewCategoryForm()
+
+    if request.method == "POST":
+        if add_category_form.validate_on_submit():
+            new_category = Category(
+                name=add_category_form.name.data,
+            )
+
+            db.session.add(new_category)
+            db.session.commit()
+
+            return redirect(url_for('admin_panel_categories'))
+
+    return render_template("admin_panel/new_item_or_category.html", form=add_category_form)
+
+
 @app.route('/customers')
 @login_required
 @admin_only
@@ -430,13 +430,15 @@ def admin_panel_customers():
     users = db.session.execute(db.select(User)).scalars().all()
     customers = []
     for user in users:
-        customer = {
-            'id': user.id,
-            'name': user.name,
-            'phone_number': user.phone_number,
-            'email': user.email
-        }
-        customers.append(customer)
+        for role in user.roles:
+            if role.name == "User":
+                customer = {
+                    'id': user.id,
+                    'name': user.name,
+                    'phone_number': user.phone_number,
+                    'email': user.email
+                }
+                customers.append(customer)
 
     return render_template("admin_panel/admin_panel_customers.html", customers=customers)
 
