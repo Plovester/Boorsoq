@@ -90,7 +90,12 @@ def login():
 
                     if is_password_correct:
                         login_user(user)
-                        return redirect(url_for('home'))
+
+                        for role in current_user.roles:
+                            if role.name == "Admin":
+                                return redirect(url_for('admin_panel'))
+                            elif role.name == "User":
+                                return redirect(url_for('home'))
                     else:
                         flash('Your password is not correct. Try again')
                         return redirect(url_for('login'))
@@ -353,6 +358,23 @@ def admin_panel():
     return render_template("admin_panel/admin_panel.html", orders=orders)
 
 
+@app.route('/orders/<int:order_id>', methods=['PUT'])
+@login_required
+@admin_only
+def change_order_details(order_id):
+    changes = request.get_json()
+
+    db.session.query(Order).filter(Order.id == order_id).update(changes, synchronize_session=False)
+    db.session.commit()
+
+    order = Order.query.filter_by(id=order_id).first()
+    order_data = {
+        'status': order.status
+    }
+
+    return jsonify(order_data)
+
+
 @app.route('/products')
 @login_required
 @admin_only
@@ -393,80 +415,6 @@ def add_item():
     return render_template("admin_panel/new_item_or_category.html", form=add_item_form)
 
 
-@app.route('/categories')
-@login_required
-@admin_only
-def admin_panel_categories():
-    categories = Category.query.filter_by(deleted_at=None)
-
-    return render_template("admin_panel/admin_panel_categories.html",
-                           categories=categories)
-
-
-@app.route('/add_category', methods=["GET", "POST"])
-@login_required
-@admin_only
-def add_category():
-    add_category_form = AddNewCategoryForm()
-
-    if request.method == "POST":
-        if add_category_form.validate_on_submit():
-            new_category = Category(
-                name=add_category_form.name.data,
-            )
-
-            db.session.add(new_category)
-            db.session.commit()
-
-            return redirect(url_for('admin_panel_categories'))
-
-    return render_template("admin_panel/new_item_or_category.html", form=add_category_form)
-
-
-@app.route('/customers')
-@login_required
-@admin_only
-def admin_panel_customers():
-    users = db.session.execute(db.select(User)).scalars().all()
-    customers = []
-    for user in users:
-        for role in user.roles:
-            if role.name == "User":
-                customer = {
-                    'id': user.id,
-                    'name': user.name,
-                    'phone_number': user.phone_number,
-                    'email': user.email
-                }
-                customers.append(customer)
-
-    return render_template("admin_panel/admin_panel_customers.html", customers=customers)
-
-
-@app.route('/reports')
-@login_required
-@admin_only
-def admin_panel_reports():
-    return render_template("admin_panel/admin_panel_reports.html")
-
-
-@app.route('/orders/<int:order_id>', methods=['PUT'])
-@login_required
-@admin_only
-def change_order_details(order_id):
-    changes = request.get_json()
-
-    db.session.query(Order).filter(Order.id == order_id).update(changes, synchronize_session=False)
-    db.session.commit()
-
-    order = Order.query.filter_by(id=order_id).first()
-    order_data = {
-        'status': order.status
-    }
-
-    return jsonify(order_data)
-
-
 @app.route('/products/<int:product_id>', methods=['PUT'])
 @login_required
 @admin_only
@@ -504,6 +452,36 @@ def delete_product(product_id):
         return redirect(url_for('admin_panel_products'))
 
 
+@app.route('/categories')
+@login_required
+@admin_only
+def admin_panel_categories():
+    categories = Category.query.filter_by(deleted_at=None)
+
+    return render_template("admin_panel/admin_panel_categories.html",
+                           categories=categories)
+
+
+@app.route('/add_category', methods=["GET", "POST"])
+@login_required
+@admin_only
+def add_category():
+    add_category_form = AddNewCategoryForm()
+
+    if request.method == "POST":
+        if add_category_form.validate_on_submit():
+            new_category = Category(
+                name=add_category_form.name.data,
+            )
+
+            db.session.add(new_category)
+            db.session.commit()
+
+            return redirect(url_for('admin_panel_categories'))
+
+    return render_template("admin_panel/new_item_or_category.html", form=add_category_form)
+
+
 @app.route('/categories/<int:category_id>', methods=['PUT'])
 @login_required
 @admin_only
@@ -535,6 +513,40 @@ def delete_category(category_id):
             db.session.commit()
 
         return redirect(url_for('admin_panel_categories'))
+
+
+@app.route('/customers')
+@login_required
+@admin_only
+def admin_panel_customers():
+    users = db.session.execute(db.select(User)).scalars().all()
+    customers = []
+    for user in users:
+        for role in user.roles:
+            if role.name == "User":
+                customer = {
+                    'id': user.id,
+                    'name': user.name,
+                    'phone_number': user.phone_number,
+                    'email': user.email
+                }
+                customers.append(customer)
+
+    return render_template("admin_panel/admin_panel_customers.html", customers=customers)
+
+
+@app.route('/reports')
+@login_required
+@admin_only
+def admin_panel_reports():
+    return render_template("admin_panel/admin_panel_reports.html")
+
+
+@app.route('/settings')
+@login_required
+@admin_only
+def admin_panel_settings():
+    return render_template("admin_panel/admin_panel_settings.html")
 
 
 if __name__ == "__main__":
