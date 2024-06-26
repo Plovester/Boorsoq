@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 from database import db
+from datetime import datetime
 
 
 class User(db.Model, UserMixin):
@@ -66,8 +67,8 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user = relationship("User", back_populates="orders")
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    created_at = db.Column(db.String(250), nullable=False)
-    ready_by_date = db.Column(db.String(250), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    ready_by_date = db.Column(db.DateTime, default=datetime.now, nullable=False)
     total_price = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(250), nullable=False)
     order_items = relationship("OrderItem", back_populates="order")
