@@ -1,7 +1,7 @@
-from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort
+from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort, json
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import date
+from datetime import datetime, date
 from functools import wraps
 from app import login_manager, create_app
 from database import db
@@ -320,8 +320,8 @@ def confirm_order():
 
     new_order = Order(
         user_id=current_user.id,
-        created_at=date.today().strftime("%d/%m/%Y"),
-        ready_by_date=ready_by_date,
+        created_at=date.today(),
+        ready_by_date=datetime.strptime(ready_by_date, '%d/%m/%Y').date(),
         total_price=session['total_price_cart'],
         status='new'
     )
@@ -539,6 +539,7 @@ def admin_panel_customers():
 @login_required
 @admin_only
 def admin_panel_reports():
+
     return render_template("admin_panel/admin_panel_reports.html")
 
 
