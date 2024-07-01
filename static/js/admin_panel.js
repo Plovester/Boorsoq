@@ -1,3 +1,5 @@
+let currentDate = new Date().toLocaleDateString();
+
 function changeOrderStatus(id) {
     const selected_status = document.getElementById(`statusOptions${id}`).value
 
@@ -157,3 +159,140 @@ function saveCategoryChanges(id) {
         name.innerHTML = data;
     })
 }
+
+function ordersByStatus() {
+    let date_start = document.getElementById('orders-by-status-start').value
+    let date_end = document.getElementById('orders-by-status-end').value
+
+    if (!date_start) {
+        date_start = new Date()
+    } else {
+        date = date_start.split("/");
+        date_start = new Date(`${date[2]}-${date[1]}-${date[0]}`);
+    }
+
+    if (!date_end) {
+        date_end = new Date()
+    } else {
+        date = date_end.split("/");
+        date_end = new Date(`${date[2]}-${date[1]}-${date[0]}`);
+    }
+
+    const dates_range = {
+        date_start: date_start,
+        date_end: date_end
+    }
+
+    let response = fetch(`/reports/number_of_orders`, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dates_range)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            const colors_for_chart = generate_rgba_for_charts(Object.keys(data).length)
+
+            const ctx = document.getElementById('ordersByStatus').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        label: 'Number of orders',
+                        data: Object.values(data),
+                        backgroundColor: colors_for_chart.backgroundColor,
+                        borderColor: colors_for_chart.borderColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: Math.max( ...Object.values(data)) + 1,
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        })
+
+
+}
+
+document.addEventListener('DOMContentLoaded', ordersByStatus(date_start = currentDate, date_end = currentDate));
+
+function generate_rgba_for_charts(length) {
+    let colors_options = {
+        backgroundColor: [],
+        borderColor: []
+    }
+
+    for (let i = 0; i < length; i++) {
+        const r = Math.round(Math.random() * 255)
+        const g = Math.round(Math.random() * 255)
+        const b = Math.round(Math.random() * 255)
+
+        const new_color = `rgba(${r}, ${g}, ${b},`
+
+        colors_options.backgroundColor.push(new_color + ' 0.2)')
+        colors_options.borderColor.push(new_color + ' 1)')
+    }
+
+    return colors_options
+}
+
+//const date_inputs = document.querySelectorAll('input[name="report-date"]');
+
+const report_start = document.querySelector('input[name="orders-by-status-start"]')
+
+const datepicker = new Datepicker(report_start, {
+    datesDisabled: function (date) {
+        let isDateDisabled;
+        const current_date = new Date()
+        const today = new Date(current_date.getFullYear(), current_date.getMonth(), current_date.getDate());
+        if (date > today) {
+            isDateDisabled = true
+        } else {
+            isDateDisabled = false
+        }
+        return isDateDisabled;
+    },
+    format: 'dd/mm/yyyy',
+    weekStart: 1
+});
+
+const report_end = document.querySelector('input[name="orders-by-status-end"]')
+
+const datepicker1 = new Datepicker(report_end, {
+    datesDisabled: function (date) {
+        let isDateDisabled;
+        const current_date = new Date()
+        const today = new Date(current_date.getFullYear(), current_date.getMonth(), current_date.getDate());
+        if (date > today) {
+            isDateDisabled = true
+        } else {
+            isDateDisabled = false
+        }
+        return isDateDisabled;
+    },
+    format: 'dd/mm/yyyy',
+    weekStart: 1
+});
+
+
+

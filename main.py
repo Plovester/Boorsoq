@@ -1,7 +1,9 @@
 from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort, json
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import func
 from datetime import datetime, date
+from dateutil import parser
 from functools import wraps
 from app import login_manager, create_app
 from database import db
@@ -541,6 +543,32 @@ def admin_panel_customers():
 def admin_panel_reports():
 
     return render_template("admin_panel/admin_panel_reports.html")
+
+
+@app.route('/reports/number_of_orders', methods=["GET", "POST"])
+@login_required
+@admin_only
+def number_of_orders():
+    dates_range = request.get_json()
+
+    orders = (db.session.query(Order).filter(Order.created_at <= parser.parse(dates_range['date_end']))
+              .filter(Order.created_at >= parser.parse(dates_range['date_start'])).all())
+
+    orders_by_statuses = {
+        'New': 0,
+        'Confirmed': 0,
+        'In progress': 0,
+        'Ready': 0,
+        'Canceled': 0,
+        'Completed': 0
+    }
+
+    for order in orders:
+        for status in orders_by_statuses:
+            if order.status.capitalize() == status:
+                orders_by_statuses[status] += 1
+
+    return json.dumps(orders_by_statuses, sort_keys=False)
 
 
 @app.route('/settings')
