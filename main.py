@@ -318,12 +318,18 @@ def checkout():
 @login_required
 def confirm_order():
     ready_by_date = request.get_json()
+
+    if not ready_by_date:
+        ready_by_date = date.today()
+    else:
+        ready_by_date = datetime.strptime(ready_by_date, '%d/%m/%Y').date()
+
     cart = session['cart']
 
     new_order = Order(
         user_id=current_user.id,
         created_at=date.today(),
-        ready_by_date=datetime.strptime(ready_by_date, '%d/%m/%Y').date(),
+        ready_by_date=ready_by_date,
         total_price=session['total_price_cart'],
         status='new'
     )
