@@ -13,8 +13,8 @@ from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 app = create_app()
 
 
-def admin_only(func):
-    @wraps(func)
+def admin_only(function):
+    @wraps(function)
     def check_credentials(*args, **kwargs):
         is_admin = False
 
@@ -23,7 +23,7 @@ def admin_only(func):
                 is_admin = True
 
         if is_admin:
-            return func(*args, **kwargs)
+            return function(*args, **kwargs)
         else:
             return abort(403)
 
@@ -547,7 +547,6 @@ def admin_panel_customers():
 @login_required
 @admin_only
 def admin_panel_reports():
-
     return render_template("admin_panel/admin_panel_reports.html")
 
 
@@ -557,7 +556,8 @@ def admin_panel_reports():
 def number_of_orders():
     dates_range = request.get_json()
 
-    orders = (db.session.query(Order).filter(Order.created_at <= parser.parse(dates_range['date_end']))
+    orders = (db.session.query(Order.status, func.count(Order.status)).group_by(Order.status)
+              .filter(Order.created_at <= parser.parse(dates_range['date_end']))
               .filter(Order.created_at >= parser.parse(dates_range['date_start'])).all())
 
     orders_by_statuses = {
@@ -569,10 +569,10 @@ def number_of_orders():
         'Completed': 0
     }
 
-    for order in orders:
+    for row in orders:
         for status in orders_by_statuses:
-            if order.status.capitalize() == status:
-                orders_by_statuses[status] += 1
+            if row[0].capitalize() == status:
+                orders_by_statuses[status] = row[1]
 
     return json.dumps(orders_by_statuses, sort_keys=False)
 
