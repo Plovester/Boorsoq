@@ -56,6 +56,7 @@ class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
     item = relationship("Item", back_populates="order_items")
     item_id = db.Column(db.Integer, db.ForeignKey("items.id"))
     order = relationship("Order", back_populates="order_items")
