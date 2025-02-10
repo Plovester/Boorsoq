@@ -288,7 +288,7 @@ def checkout():
             "item_price": db_item.price,
             "item_qty": item["item_qty"],
             "item_total_price": db_item.price * item["item_qty"],
-            "item_image_url": db_item.image_url
+            "item_image_url": db_item.image_url,
         }
 
         if db_item.deleted_at:
@@ -343,6 +343,7 @@ def confirm_order():
         new_order_item = OrderItem(
             price=db_item.price,
             quantity=item["item_qty"],
+            created_at=ready_by_date,
             item_id=db_item.id,
             order_id=new_order.id
         )
@@ -575,6 +576,29 @@ def number_of_orders():
                 orders_by_statuses[status] = row[1]
 
     return json.dumps(orders_by_statuses, sort_keys=False)
+
+
+@app.route('/reports/most_popular_products', methods=["GET", "POST"])
+@login_required
+@admin_only
+def most_popular_products():
+    dates_range = request.get_json()
+
+    # products = (db.session.query(OrderItem.item_id, func.sum(OrderItem.quantity)).join(Order)
+    #             .filter(Order.created_at <= parser.parse(dates_range['date_end']))
+    #             .filter(Order.created_at >= parser.parse(dates_range['date_start'])).all())
+
+    orders = (db.session.query(Order).filter(Order.created_at <= parser.parse(dates_range['date_end']))
+              .filter(Order.created_at >= parser.parse(dates_range['date_start'])))
+
+    products = ((db.session.query(OrderItem.item_id, func.sum(OrderItem.quantity).label('quantity'))
+                .group_by(OrderItem.item_id))
+                )
+
+    print(products)
+
+    # return json.dumps(orders_by_statuses, sort_keys=False)
+    return jsonify('Success')
 
 
 @app.route('/settings')
