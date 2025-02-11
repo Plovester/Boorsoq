@@ -33,8 +33,8 @@
                                         {% endfor %}
                                     </select>
                                 </td>
-                                <td data-bs-toggle="modal" data-bs-target="#order{{ order.id }}-modal">{{ order.created_at }}</td>
-                                <td data-bs-toggle="modal" data-bs-target="#order{{ order.id }}-modal">{{ order.ready_by_date }}</td>
+                                <td data-bs-toggle="modal" data-bs-target="#order{{ order.id }}-modal">{{ order.created_at.strftime('%d-%m-%Y') }}</td>
+                                <td data-bs-toggle="modal" data-bs-target="#order{{ order.id }}-modal">{{ order.ready_by_date.strftime('%d-%m-%Y') }}</td>
                                 <td data-bs-toggle="modal" data-bs-target="#order{{ order.id }}-modal">£{{ (order.total_price/100)|round(2) }}</td>
                             </tr>
                             {% endfor %}
