@@ -138,3 +138,7 @@ cython_debug/
 
 # PyCharm
 .idea/
+
+migrations/.DS_Store
+shop.db
+.DS_Store

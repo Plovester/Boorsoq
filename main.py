@@ -584,21 +584,20 @@ def number_of_orders():
 def most_popular_products():
     dates_range = request.get_json()
 
-    # products = (db.session.query(OrderItem.item_id, func.sum(OrderItem.quantity)).join(Order)
-    #             .filter(Order.created_at <= parser.parse(dates_range['date_end']))
-    #             .filter(Order.created_at >= parser.parse(dates_range['date_start'])).all())
+    products = sorted(((db.session.query(OrderItem.item_id, func.sum(OrderItem.quantity).label('quantity'))
+                        .group_by(OrderItem.item_id))
+                        .filter(OrderItem.created_at <= parser.parse(dates_range['date_end']))
+                        .filter(OrderItem.created_at >= parser.parse(dates_range['date_start'])).all()),
+                      key=lambda tup: tup[1], reverse=True)[:5]
 
-    orders = (db.session.query(Order).filter(Order.created_at <= parser.parse(dates_range['date_end']))
-              .filter(Order.created_at >= parser.parse(dates_range['date_start'])))
+    popular_products = {}
 
-    products = ((db.session.query(OrderItem.item_id, func.sum(OrderItem.quantity).label('quantity'))
-                .group_by(OrderItem.item_id))
-                )
+    for product in products:
+        product_name = Item.query.filter_by(id=product[0]).first()
 
-    print(products)
+        popular_products[product_name.name] = product[1]
 
-    # return json.dumps(orders_by_statuses, sort_keys=False)
-    return jsonify('Success')
+    return json.dumps(popular_products, sort_keys=False)
 
 
 @app.route('/settings')

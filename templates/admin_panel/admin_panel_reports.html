@@ -3,7 +3,7 @@
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                     <h2 class="selected-text-color">Reports</h2>
                     <h4>Number of orders</h4>
-                     <div class="input-group mb-4">
+                    <div class="input-group mb-4">
                         <span class="me-2 mt-1">Report from: </span>
                         <span class="input-group-text">
                           <i class="fa-regular fa-calendar-days" style="color: #ff7a00;"></i>
@@ -25,9 +25,38 @@
                         <button type="button"
                                 class="btn main-text-color btn-warning"
                                 onclick="ordersByStatus()">Get report</button>
-                     </div>
+                    </div>
                     <canvas class="my-4 w-100"
                             id="ordersByStatus"
+                            width="1552"
+                            height="655"
+                            style="display: block; box-sizing: border-box; height: 655px; width: 1552px;"></canvas>
+                    <h4>Top 5 popular products</h4>
+                    <div class="input-group mb-4">
+                        <span class="me-2 mt-1">Report from: </span>
+                        <span class="input-group-text">
+                          <i class="fa-regular fa-calendar-days" style="color: #ff7a00;"></i>
+                        </span>
+                        <input type="text"
+                               id="popular-products-start"
+                               name="popular-products-start"
+                               class="form-control"
+                               placeholder="DD/MM/YYYY" required>
+                        <span class="mx-2 mt-1">to: </span>
+                        <span class="input-group-text">
+                          <i class="fa-regular fa-calendar-days" style="color: #ff7a00;"></i>
+                        </span>
+                        <input type="text"
+                               id="popular-products-end"
+                               name="popular-products-end"
+                               class="form-control"
+                               placeholder="DD/MM/YYYY" required>
+                        <button type="button"
+                                class="btn main-text-color btn-warning"
+                                onclick="getPopularProducts()">Get report</button>
+                    </div>
+                    <canvas class="my-4 w-100"
+                            id="mostPopularProducts"
                             width="1552"
                             height="655"
                             style="display: block; box-sizing: border-box; height: 655px; width: 1552px;"></canvas>
