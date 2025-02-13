@@ -165,7 +165,10 @@ function ordersByStatus() {
     let date_end = document.getElementById('orders-by-status-end').value
 
     if (!date_start) {
-        date_start = new Date()
+        date_start = new Date();
+        date_start.setDate(date_start.getDate() - 7);
+        date = new Date(date_start).toISOString()
+        document.getElementById('orders-by-status-start').placeholder = `${date.slice(8, 10)}/${date.slice(5, 7)}/${date.slice(0, 4)}`;
     } else {
         date = date_start.split("/");
         date_start = new Date(`${date[2]}-${date[1]}-${date[0]}`);
@@ -173,6 +176,8 @@ function ordersByStatus() {
 
     if (!date_end) {
         date_end = new Date()
+        date = new Date(date_end).toISOString()
+        document.getElementById('orders-by-status-end').placeholder = `${date.slice(8, 10)}/${date.slice(5, 7)}/${date.slice(0, 4)}`;
     } else {
         date = date_end.split("/");
         date_end = new Date(`${date[2]}-${date[1]}-${date[0]}`);
@@ -237,7 +242,10 @@ function getPopularProducts() {
     let date_end = document.getElementById('popular-products-end').value
 
     if (!date_start) {
-        date_start = new Date()
+        date_start = new Date();
+        date_start.setDate(date_start.getDate() - 7);
+        date = new Date(date_start).toISOString()
+        document.getElementById('popular-products-start').placeholder = `${date.slice(8, 10)}/${date.slice(5, 7)}/${date.slice(0, 4)}`
     } else {
         date = date_start.split("/");
         date_start = new Date(`${date[2]}-${date[1]}-${date[0]}`);
@@ -245,6 +253,8 @@ function getPopularProducts() {
 
     if (!date_end) {
         date_end = new Date()
+        date = new Date(date_end).toISOString()
+        document.getElementById('popular-products-end').placeholder = `${date.slice(8, 10)}/${date.slice(5, 7)}/${date.slice(0, 4)}`
     } else {
         date = date_end.split("/");
         date_end = new Date(`${date[2]}-${date[1]}-${date[0]}`);
@@ -397,4 +407,6 @@ const datepicker3 = new Datepicker(products_report_end, {
 });
 
 document.addEventListener('DOMContentLoaded', ordersByStatus());
+document.addEventListener('DOMContentLoaded', getPopularProducts());
+
 
