@@ -607,6 +607,35 @@ def admin_panel_settings():
     return render_template("admin_panel/admin_panel_settings.html")
 
 
+@app.route('/new_admin', methods=["GET", "POST"])
+@login_required
+@admin_only
+def create_new_admin():
+    new_admin_data = request.get_json()
+
+    admin = User.query.filter_by(email=new_admin_data['email']).first()
+
+    if not admin:
+        role = Role.query.filter_by(name='Admin').first()
+
+        hashed_password = generate_password_hash(new_admin_data['password'], method='pbkdf2:sha256',
+                                                 salt_length=8)
+
+        new_admin = User(
+            name=new_admin_data['name'],
+            phone_number=new_admin_data['phone_number'],
+            email=new_admin_data['email'],
+            password=hashed_password
+        )
+
+        new_admin.roles.append(role)
+
+        db.session.add(new_admin)
+        db.session.commit()
+
+    return render_template("admin_panel/admin_panel_settings.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 

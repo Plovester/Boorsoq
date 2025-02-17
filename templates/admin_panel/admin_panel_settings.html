@@ -2,7 +2,158 @@
 
                 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                     <h2 class="selected-text-color">Settings</h2>
-                    <canvas class="my-4 w-100" id="myChart" width="1552" height="655" style="display: block; box-sizing: border-box; height: 655px; width: 1552px;"></canvas>
+                    <div class="user-profile-info d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+                        <div class="list-group">
+                            <div class="list-group-item list-group-item-action d-flex gap-5 py-3" aria-current="true">
+                                <i class="fa-solid fa-user rounded-circle flex-shrink-0" style="color: #ff7a00; width: 32px; height: 32px;"></i>
+                                <div class="d-flex gap-2 w-100 justify-content-between">
+                                    <div>
+                                        <h6 class="mb-0 selected-text-color">Name</h6>
+                                        <p class="mb-0 opacity-75 main-text-color" id="current-user-name">{{ current_user.name }}</p>
+                                    </div>
+                                </div>
+                                <button class="main-text-color btn btn-warning" data-bs-toggle="modal" data-bs-target="#name-modal">Edit</button>
+                            </div>
+                            <div class="list-group-item list-group-item-action d-flex gap-5 py-3" aria-current="true">
+                                <i class="fa-solid fa-envelope rounded-circle flex-shrink-0" style="color: #ff7a00; width: 32px; height: 32px;"></i>
+                                <div class="d-flex gap-2 w-100 justify-content-between">
+                                    <div>
+                                        <h6 class="mb-0 selected-text-color">E-mail</h6>
+                                        <p class="mb-0 opacity-75 main-text-color" id="current-user-email">{{ current_user.email }}</p>
+                                    </div>
+                                </div>
+                                <button class="main-text-color btn btn-warning" data-bs-toggle="modal" data-bs-target="#email-modal">Edit</button>
+                            </div>
+                            <div class="list-group-item list-group-item-action d-flex gap-5 py-3" aria-current="true">
+                                <i class="fa-solid fa-phone rounded-circle flex-shrink-0" style="color: #ff7a00; width: 32px; height: 32px;"></i>
+                                <div class="d-flex gap-2 w-100 justify-content-between">
+                                    <div>
+                                        <h6 class="mb-0 selected-text-color">Phone number</h6>
+                                        <p class="mb-0 opacity-75 main-text-color" id="current-user-phone">{{ current_user.phone_number }}</p>
+                                    </div>
+                                </div>
+                                <button class="main-text-color btn btn-warning" data-bs-toggle="modal" data-bs-target="#phone-modal">Edit</button>
+                            </div>
+                            <div class="list-group-item list-group-item-action d-flex gap-5 py-3" aria-current="true">
+                                <i class="fa-solid fa-key rounded-circle flex-shrink-0" style="color: #ff7a00; width: 32px; height: 32px;"></i>
+                                <div class="d-flex gap-2 w-100 justify-content-between">
+                                    <div>
+                                        <h6 class="mb-0 selected-text-color">Password</h6>
+                                        <p class="mb-0 opacity-75 main-text-color">********</p>
+                                    </div>
+                                </div>
+                                <button class="main-text-color btn btn-warning" data-bs-toggle="modal" data-bs-target="#password-modal">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 col-4 mx-auto">
+                        <button class="main-text-color btn btn-warning" data-bs-toggle="modal" data-bs-target="#new-admin-modal">Add new admin</button>
+                    </div>
+
+
+                    <div class="modal fade" id="name-modal" tabindex="-1" aria-labelledby="name" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title selected-text-color">Your name</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="name" class="form-label">Enter your name:</label>
+                                    <input type="text" class="form-control" id="name" value="{{ current_user.name }}" >
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn selected-text-color btn-outline-warning" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn main-text-color btn-warning"  onclick="editAdminName({{ current_user.id }})" data-bs-dismiss="modal">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="email-modal" tabindex="-1" aria-labelledby="email" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title selected-text-color">Your e-mail</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="email" class="form-label">Enter your e-mail:</label>
+                                    <input type="text" class="form-control" id="email" value="{{ current_user.email }}" >
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn selected-text-color btn-outline-warning" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn main-text-color btn-warning" onclick="editAdminEmail({{ current_user.id }})" data-bs-dismiss="modal">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="phone-modal" tabindex="-1" aria-labelledby="phone" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title selected-text-color">Your phone number</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="phone" class="form-label">Enter your phone number:</label>
+                                    <input type="text" class="form-control" id="phone" value="{{ current_user.phone_number }}" >
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn selected-text-color btn-outline-warning" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn main-text-color btn-warning" onclick="editAdminPhone({{ current_user.id }})" data-bs-dismiss="modal">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="password-modal" tabindex="-1" aria-labelledby="password" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title selected-text-color">Your name</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="old-password" class="form-label">Enter your current password:</label>
+                                    <input type="password" class="form-control" id="old-password">
+                                    <label for="new-password" class="form-label mt-3">Enter your new password:</label>
+                                    <input type="password" class="form-control" id="new-password">
+                                    <label for="confirmed-password" class="form-label mt-3">Confirm your new password:</label>
+                                    <input type="password" class="form-control" id="confirmed-password">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn selected-text-color btn-outline-warning" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn main-text-color btn-warning" onclick="editAdminPassword({{ current_user.id }})" data-bs-dismiss="modal">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="modal fade" id="new-admin-modal" tabindex="-1" aria-labelledby="password" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title selected-text-color">Enter new admin data</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="new-admin-name" class="form-label">Enter new admin name:</label>
+                                    <input type="text" class="form-control" id="new-admin-name">
+                                    <label for="new-admin-phone" class="form-label mt-3">Enter new admin phone number:</label>
+                                    <input type="text" class="form-control" id="new-admin-phone">
+                                    <label for="new-admin-email" class="form-label mt-3">Enter new admin e-mail:</label>
+                                    <input type="text" class="form-control" id="new-admin-email">
+                                    <label for="new-admin-password" class="form-label mt-3">Enter password for the new admin:</label>
+                                    <input type="password" class="form-control" id="new-admin-password">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn selected-text-color btn-outline-warning" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn main-text-color btn-warning" onclick="createNewAdmin()" data-bs-dismiss="modal">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </main>
 
 {% include "admin_panel/admin_panel_footer.html" %}

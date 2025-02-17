@@ -314,6 +314,137 @@ function getPopularProducts() {
         })
     }
 
+function editAdminName(id) {
+    const name = document.getElementById('name').value
+
+    let response = fetch(`/user_settings/${id}`, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: name})
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            let admin_name = document.getElementById("current-user-name")
+            admin_name.innerHTML = data.name
+
+        })
+}
+
+function editAdminEmail(id) {
+    const email = document.getElementById('email').value
+
+    let response = fetch(`/user_settings/${id}`, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email: email})
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            let admin_email = document.getElementById("current-user-email")
+            admin_email.innerHTML = data.email
+        })
+}
+
+function editAdminPhone(id) {
+    const phone = document.getElementById('phone').value
+
+    let response = fetch(`/user_settings/${id}`, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({phone_number: phone})
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            let admin_phone = document.getElementById("current-user-phone")
+            admin_phone.innerHTML = data.phone_number
+        })
+}
+
+function editAdminPassword(id) {
+    const old_password = document.getElementById('old-password').value
+    const new_password = document.getElementById('new-password').value
+    const confirmed_password = document.getElementById('confirmed-password').value
+
+    if (new_password === confirmed_password) {
+        const password_info = {
+                        old_password: old_password,
+                        new_password: new_password
+                    }
+
+        let response = fetch(`/user_settings/${id}/password`, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(password_info)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response
+            } else {
+                throw new Error('Request failed')
+            }
+        })
+    }
+}
+
+function createNewAdmin() {
+    const new_admin_name = document.getElementById('new-admin-name').value
+    const new_admin_phone = document.getElementById('new-admin-phone').value
+    const new_admin_email = document.getElementById('new-admin-email').value
+    const new_admin_password = document.getElementById('new-admin-password').value
+
+    let response = fetch(`/new_admin`, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: new_admin_name,
+                                  phone_number: new_admin_phone,
+                                  email: new_admin_email,
+                                  password: new_admin_password})
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error('Request failed');
+            }
+        })
+        .then(data => {
+            console.log('Success')
+        })
+}
+
 function generate_rgba_for_charts(length) {
     let colors_options = {
         backgroundColor: [],
