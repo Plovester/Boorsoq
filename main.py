@@ -37,6 +37,15 @@ def home():
     return render_template("index.html", items=items)
 
 
+@app.route('/categories')
+def get_categories():
+    categories = db.session.execute(db.select(Category)).scalars().all()
+    print(categories)
+
+    return render_template("categories.html", categories=categories)
+
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.get_or_404(User, user_id)
