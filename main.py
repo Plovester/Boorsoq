@@ -30,6 +30,11 @@ def admin_only(function):
     return check_credentials
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return db.get_or_404(User, user_id)
+
+
 @app.route('/')
 def home():
     items = db.session.execute(db.select(Item)).scalars().all()
@@ -40,15 +45,13 @@ def home():
 @app.route('/categories')
 def get_categories():
     categories = db.session.execute(db.select(Category)).scalars().all()
-    print(categories)
 
     return render_template("categories.html", categories=categories)
 
 
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.get_or_404(User, user_id)
+@app.route('/categories/<int:category_id>')
+def show_category():
+    pass
 
 
 @app.route('/register', methods=["GET", "POST"])

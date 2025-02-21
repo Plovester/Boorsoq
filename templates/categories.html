@@ -4,12 +4,20 @@
         {% if categories %}
         {% for category in categories %}
         {% if not category.deleted_at %}
-            <div class="card text-bg-dark w-100 m-2">
-                <img src="..." class="card-img" alt="...">
-                <div class="card-img-overlay">
-                    <h5 class="card-title">{{ category.name }}</h5>
+            <a href="{{ url_for('show_category', category_id=category.id) }}" class="d-flex w-100">
+                <div class="card main-text-color bg-white w-100 m-2 p-0">
+                    <img
+                        {% if category.image_url %}
+                            src="{{category.image_url}}"
+                        {% else %}
+                            src="{{url_for('static', filename='assets/img/header-img.jpg') }}"
+                        {% endif %}
+                        class="category-img card-img" alt="category_image">
+                    <div class="card-img-overlay">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                    </div>
                 </div>
-            </div>
+            </a>
         {% endif %}
         {% endfor %}
         {% endif %}

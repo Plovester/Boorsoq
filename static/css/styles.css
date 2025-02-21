@@ -50,6 +50,11 @@ input {
     color: white;
 }
 
+.category-img {
+    height: 300px;
+    object-fit: cover;
+}
+
 .qty-control {
     width:40%;
 }
