@@ -54,6 +54,15 @@ def show_category():
     pass
 
 
+@app.route('/help')
+def help_page():
+    pass
+
+
+@app.route('/contact')
+def contacts_page():
+    pass
+
 @app.route('/register', methods=["GET", "POST"])
 def register():
     register_form = RegisterForm()

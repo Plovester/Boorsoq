@@ -20,10 +20,18 @@
                     </a>
 
                     <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                        <li><a href="/" class="selected-text-color nav-link px-2">Home</a></li>
-                        <li><a href="{{ url_for('get_categories') }}" class="main-text-color nav-link px-2">Categories</a></li>
-                        <li><a href="#" class="main-text-color nav-link px-2">Help</a></li>
-                        <li><a href="#" class="main-text-color nav-link px-2">Contact</a></li>
+                        <li><a href="/"
+                               class="main-text-color nav-link px-2 {{ 'active' if request.path == url_for('home') }}"
+                               id="home">Home</a></li>
+                        <li><a href="{{ url_for('get_categories') }}"
+                               class="main-text-color nav-link px-2 {{ 'active' if request.path == url_for('get_categories') }}"
+                               id="categories">Categories</a></li>
+                        <li><a href="{{ url_for('help_page') }}"
+                               class="main-text-color nav-link px-2 {{ 'active' if request.path == url_for('help_page') }}"
+                               id="help">Help</a></li>
+                        <li><a href="{{ url_for('contacts_page') }}"
+                               class="main-text-color nav-link px-2 {{ 'active' if request.path == url_for('contacts_page') }}"
+                               id="contact">Contact</a></li>
                     </ul>
 
                     <div class="col-md-auto text-end">
