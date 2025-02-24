@@ -370,7 +370,7 @@ def confirm_order():
     return "Success", 204
 
 
-@app.route('/orders')
+@app.route('/admin/orders')
 @login_required
 @admin_only
 def admin_panel():
@@ -379,7 +379,7 @@ def admin_panel():
     return render_template("admin_panel/admin_panel.html", orders=orders)
 
 
-@app.route('/orders/<int:order_id>', methods=['PUT'])
+@app.route('/admin/orders/<int:order_id>', methods=['PUT'])
 @login_required
 @admin_only
 def change_order_details(order_id):
@@ -396,7 +396,7 @@ def change_order_details(order_id):
     return jsonify(order_data)
 
 
-@app.route('/products')
+@app.route('/admin/products')
 @login_required
 @admin_only
 def admin_panel_products():
@@ -408,7 +408,7 @@ def admin_panel_products():
                            categories=categories)
 
 
-@app.route('/add_item', methods=["GET", "POST"])
+@app.route('/admin/products/add_item', methods=["GET", "POST"])
 @login_required
 @admin_only
 def add_item():
@@ -436,7 +436,7 @@ def add_item():
     return render_template("admin_panel/new_item_or_category.html", form=add_item_form)
 
 
-@app.route('/products/<int:product_id>', methods=['PUT'])
+@app.route('/admin/products/<int:product_id>', methods=['PUT'])
 @login_required
 @admin_only
 def edit_product_params(product_id):
@@ -458,7 +458,7 @@ def edit_product_params(product_id):
     return jsonify(product_data)
 
 
-@app.route('/deletion_product/<int:product_id>', methods=['POST'])
+@app.route('/admin/products/deletion_product/<int:product_id>', methods=['POST'])
 @login_required
 @admin_only
 def delete_product(product_id):
@@ -473,7 +473,7 @@ def delete_product(product_id):
         return redirect(url_for('admin_panel_products'))
 
 
-@app.route('/categories')
+@app.route('/admin/categories')
 @login_required
 @admin_only
 def admin_panel_categories():
@@ -483,7 +483,7 @@ def admin_panel_categories():
                            categories=categories)
 
 
-@app.route('/add_category', methods=["GET", "POST"])
+@app.route('/admin/categories/add_category', methods=["GET", "POST"])
 @login_required
 @admin_only
 def add_category():
@@ -503,7 +503,7 @@ def add_category():
     return render_template("admin_panel/new_item_or_category.html", form=add_category_form)
 
 
-@app.route('/categories/<int:category_id>', methods=['PUT'])
+@app.route('/admin/categories/<int:category_id>', methods=['PUT'])
 @login_required
 @admin_only
 def edit_category_params(category_id):
@@ -517,7 +517,7 @@ def edit_category_params(category_id):
     return jsonify(category_name)
 
 
-@app.route('/deletion_category/<int:category_id>', methods=['POST'])
+@app.route('/admin/categories/deletion_category/<int:category_id>', methods=['POST'])
 @login_required
 @admin_only
 def delete_category(category_id):
@@ -536,7 +536,7 @@ def delete_category(category_id):
         return redirect(url_for('admin_panel_categories'))
 
 
-@app.route('/customers')
+@app.route('/admin/customers')
 @login_required
 @admin_only
 def admin_panel_customers():
@@ -556,14 +556,14 @@ def admin_panel_customers():
     return render_template("admin_panel/admin_panel_customers.html", customers=customers)
 
 
-@app.route('/reports')
+@app.route('/admin/reports')
 @login_required
 @admin_only
 def admin_panel_reports():
     return render_template("admin_panel/admin_panel_reports.html")
 
 
-@app.route('/reports/number_of_orders', methods=["GET", "POST"])
+@app.route('/admin/reports/number_of_orders', methods=["GET", "POST"])
 @login_required
 @admin_only
 def number_of_orders():
@@ -590,7 +590,7 @@ def number_of_orders():
     return json.dumps(orders_by_statuses, sort_keys=False)
 
 
-@app.route('/reports/most_popular_products', methods=["GET", "POST"])
+@app.route('/admin/reports/most_popular_products', methods=["GET", "POST"])
 @login_required
 @admin_only
 def most_popular_products():
@@ -612,14 +612,14 @@ def most_popular_products():
     return json.dumps(popular_products, sort_keys=False)
 
 
-@app.route('/settings')
+@app.route('/admin/settings')
 @login_required
 @admin_only
 def admin_panel_settings():
     return render_template("admin_panel/admin_panel_settings.html")
 
 
-@app.route('/new_admin', methods=["GET", "POST"])
+@app.route('/admin/new_admin', methods=["GET", "POST"])
 @login_required
 @admin_only
 def create_new_admin():
