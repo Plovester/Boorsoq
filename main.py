@@ -50,8 +50,14 @@ def get_categories():
 
 
 @app.route('/categories/<int:category_id>')
-def show_category():
-    pass
+def show_category(category_id):
+    category = Category.query.filter_by(id=category_id).first()
+
+    items = category.items
+
+    return render_template("items_by_category.html",
+                           category=category,
+                           items=items)
 
 
 @app.route('/help')
