@@ -69,6 +69,7 @@ def help_page():
 def contacts_page():
     pass
 
+
 @app.route('/register', methods=["GET", "POST"])
 def register():
     register_form = RegisterForm()

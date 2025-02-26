@@ -3,7 +3,7 @@ let currentDate = new Date().toLocaleDateString();
 function changeOrderStatus(id) {
     const selected_status = document.getElementById(`statusOptions${id}`).value
 
-    let response = fetch(`/orders/${id}`, {
+    let response = fetch(`/admin/orders/${id}`, {
             method: 'PUT',
             mode: 'cors',
             headers: {
@@ -27,7 +27,7 @@ function changeOrderStatus(id) {
 function changeOrderDetails(id) {
     const status = document.querySelector(`#order${id}-modal #status`).value
 
-    let response = fetch(`/orders/${id}`, {
+    let response = fetch(`/admin/orders/${id}`, {
             method: 'PUT',
             mode: 'cors',
             headers: {
@@ -66,7 +66,7 @@ function saveProductChanges(id) {
                         visibility: visibility
                     }
 
-    let response = fetch(`/products/${id}`, {
+    let response = fetch(`/admin/products/${id}`, {
         method: 'PUT',
         mode: 'cors',
         headers: {
@@ -107,7 +107,7 @@ function saveProductChanges(id) {
 }
 
 function changeProductVisibility(element, id) {
-    let response = fetch(`/products/${id}`, {
+    let response = fetch(`/admin/products/${id}`, {
         method: 'PUT',
         mode: 'cors',
         headers: {
@@ -139,7 +139,7 @@ function changeProductVisibility(element, id) {
 function saveCategoryChanges(id) {
     const name = document.querySelector(`#category${id}-modal #name`).value
 
-    let response = fetch(`/categories/${id}`, {
+    let response = fetch(`/admin/categories/${id}`, {
         method: 'PUT',
         mode: 'cors',
         headers: {
@@ -188,7 +188,7 @@ function ordersByStatus() {
         date_end: date_end
     }
 
-    let response = fetch(`/reports/number_of_orders`, {
+    let response = fetch(`/admin/reports/number_of_orders`, {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -265,7 +265,7 @@ function getPopularProducts() {
         date_end: date_end
     }
 
-    let response = fetch(`/reports/most_popular_products`, {
+    let response = fetch(`/admin/reports/most_popular_products`, {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -422,7 +422,7 @@ function createNewAdmin() {
     const new_admin_email = document.getElementById('new-admin-email').value
     const new_admin_password = document.getElementById('new-admin-password').value
 
-    let response = fetch(`/new_admin`, {
+    let response = fetch(`/admin/new_admin`, {
             method: 'POST',
             mode: 'cors',
             headers: {

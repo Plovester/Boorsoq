@@ -17,13 +17,13 @@
                 <div class="row">
                     <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
                         {% set navigation_bar = [
-                            ('/orders', 'admin_panel', 'fa-table', 'Orders'),
-                            ('/products', 'admin_panel_products', 'fa-stroopwafel', 'Products'),
-                            ('/categories', 'admin_panel_categories', 'fa-list', 'Categories'),
-                            ('/customers', 'admin_panel_customers', 'fa-users', 'Customers'),
-                            ('/reports', 'admin_panel_reports', 'fa-chart-pie','Reports'),
-                            ('/settings', 'admin_panel_settings', 'fa-gears','Settings'),
-                            ('/logout', 'logout', 'fa-right-from-bracket','Sign out')
+                            ('/admin/orders', 'admin_panel', 'fa-table', 'Orders'),
+                            ('/admin/products', 'admin_panel_products', 'fa-stroopwafel', 'Products'),
+                            ('/admin/categories', 'admin_panel_categories', 'fa-list', 'Categories'),
+                            ('/admin/customers', 'admin_panel_customers', 'fa-users', 'Customers'),
+                            ('/admin/reports', 'admin_panel_reports', 'fa-chart-pie', 'Reports'),
+                            ('/admin/settings', 'admin_panel_settings', 'fa-gears', 'Settings'),
+                            ('/logout', 'logout', 'fa-right-from-bracket', 'Sign out')
                         ] %}
                         {% set active_page = request.endpoint|default('admin_panel') %}
                         <ul class="nav flex-column mt-3">
