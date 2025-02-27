@@ -12,7 +12,7 @@
         {% if items %}
         {% for item in items %}
         {% if item.visibility and not item.deleted_at %}
-            <div class="col card text-center m-3" style="width: 18rem;">
+            <div class="col card text-center m-3 pt-3" style="width: 18rem;">
                 <img src="{{ item.image_url }}" class="item-img card-img-top" alt="item_image">
                 <div class="card-body">
                     <h5 class="selected-text-color card-title">£{{ (item.price/100)|round(2) }}</h5>
