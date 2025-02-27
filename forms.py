@@ -29,4 +29,5 @@ class AddNewItemForm(FlaskForm):
 
 class AddNewCategoryForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
+    image_url = StringField("Category image URL", validators=[DataRequired(), URL()])
     add = SubmitField("Add category")

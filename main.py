@@ -509,6 +509,7 @@ def add_category():
         if add_category_form.validate_on_submit():
             new_category = Category(
                 name=add_category_form.name.data,
+                image_url=add_category_form.image_url.data
             )
 
             db.session.add(new_category)
