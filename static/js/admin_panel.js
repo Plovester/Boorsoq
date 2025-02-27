@@ -138,6 +138,7 @@ function changeProductVisibility(element, id) {
 
 function saveCategoryChanges(id) {
     const name = document.querySelector(`#category${id}-modal #name`).value
+    const image_url = document.querySelector(`#category${id}-modal #image`).value
 
     let response = fetch(`/admin/categories/${id}`, {
         method: 'PUT',
@@ -145,7 +146,7 @@ function saveCategoryChanges(id) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({name: name})
+        body: JSON.stringify({name: name, image_url: image_url})
     })
     .then(response => {
         if (response.ok) {
@@ -156,7 +157,10 @@ function saveCategoryChanges(id) {
     })
     .then(data => {
         let name = document.getElementById(`category${id}-name`);
-        name.innerHTML = data;
+        name.innerHTML = data.name;
+
+        let image = document.querySelector(`#category${id}-image .category-img`);
+        image.src = data.image_url;
     })
 }
 

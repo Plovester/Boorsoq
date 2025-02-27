@@ -8,6 +8,7 @@
             <tr>
                 <th class="selected-text-color" scope="col">Category ID</th>
                 <th class="selected-text-color" scope="col">Name</th>
+                <th class="selected-text-color" scope="col">Image</th>
                 <th class="selected-text-color" scope="col">Products</th>
                 <th class="selected-text-color" scope="col"></th>
             </tr>
@@ -17,6 +18,12 @@
             <tr>
                 <td class="ps-2">{{ category.id }}</td>
                 <td id="category{{ category.id }}-name">{{ category.name }}</td>
+                <td id="category{{ category.id }}-image">
+                    <img src="{{ category.image_url }}"
+                         class="category-img rounded"
+                         alt="category image"
+                         style="width: 250px; height: 120px;">
+                </td>
                 <td>
                     {% for item in category.items %}
                     {% if item.deleted_at == None %}
@@ -25,13 +32,13 @@
                     {% endfor %}
                 </td>
                 <td>
-                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-25 mx-auto"
+                    <button class="btn btn-outline-warning me-4 d-block mb-1 w-50 mx-auto"
                             data-bs-toggle="modal"
                             data-bs-target="#category{{ category.id }}-modal">
                         <i class="fa-solid fa-pencil" style="color: #ff7a00;"></i>
                     </button>
                     <form action="{{ url_for('delete_category', category_id=category.id) }}" method = "POST">
-                        <button class="btn btn-outline-warning me-4 d-block w-25 mx-auto"
+                        <button class="btn btn-outline-warning me-4 d-block w-50 mx-auto"
                                 type="submit">
                             <i class="fa-solid fa-trash-can" style="color: #ff7a00;"></i>
                         </button>
@@ -56,6 +63,8 @@
             <div class="modal-body">
                 <label for="name" class="form-label">Name of the category:</label>
                 <input type="text" class="form-control" id="name" value="{{ category.name }}" >
+                <label for="image" class="form-label mt-2">Image URL:</label>
+                <input type="text" class="form-control" id="image" value="{{ category.image_url }}" >
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn selected-text-color btn-outline-warning"

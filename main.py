@@ -529,8 +529,9 @@ def edit_category_params(category_id):
     db.session.commit()
 
     category_name = Category.query.filter_by(id=category_id).first().name
+    image_url = Category.query.filter_by(id=category_id).first().image_url
 
-    return jsonify(category_name)
+    return jsonify({'name': category_name, 'image_url': image_url})
 
 
 @app.route('/admin/categories/deletion_category/<int:category_id>', methods=['POST'])
