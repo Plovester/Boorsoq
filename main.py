@@ -60,14 +60,9 @@ def show_category(category_id):
                            items=items)
 
 
-@app.route('/help')
-def help_page():
-    pass
-
-
 @app.route('/contact')
 def contacts_page():
-    pass
+    return render_template("contacts.html")
 
 
 @app.route('/register', methods=["GET", "POST"])
