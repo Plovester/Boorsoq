@@ -31,3 +31,8 @@ class AddNewCategoryForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     image_url = StringField("Category image URL", validators=[DataRequired(), URL()])
     add = SubmitField("Add category")
+
+
+class SearchForm(FlaskForm):
+    item = StringField("Search", validators=[DataRequired()], render_kw={"placeholder": "Search for products"})
+

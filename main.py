@@ -1,14 +1,14 @@
 from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort, json
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import func
+from sqlalchemy import func, literal
 from datetime import datetime, date
 from dateutil import parser
 from functools import wraps
 from app import login_manager, create_app
 from database import db
 from models import User, Role, Category, Item, OrderItem, Order
-from forms import RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
+from forms import SearchForm, RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 
 app = create_app()
 
@@ -35,11 +35,16 @@ def load_user(user_id):
     return db.get_or_404(User, user_id)
 
 
-@app.route('/')
+@app.route('/', methods=["GET", "POST"])
 def home():
+    search_form = SearchForm()
     items = db.session.execute(db.select(Item)).scalars().all()
 
-    return render_template("index.html", items=items)
+    if request.method == 'POST':
+        searching_item = search_form.item.data
+        return redirect(url_for('show_searching_items', searching_item=searching_item))
+
+    return render_template("index.html", items=items, search_form=search_form)
 
 
 @app.route('/categories')
@@ -63,6 +68,13 @@ def show_category(category_id):
 @app.route('/contact')
 def contacts_page():
     return render_template("contacts.html")
+
+
+@app.route('/search/')
+def show_searching_items():
+    searching_item = request.args['searching_item']
+    result = Item.query.filter(Item.name.ilike('%%' + literal(searching_item) + '%%')).all()
+    return render_template('searched_items.html', items=result)
 
 
 @app.route('/register', methods=["GET", "POST"])
