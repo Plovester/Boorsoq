@@ -35,16 +35,19 @@ def load_user(user_id):
     return db.get_or_404(User, user_id)
 
 
-@app.route('/', methods=["GET", "POST"])
-def home():
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+@app.route('/index/<int:page>', methods=['GET', 'POST'])
+def home(page=1):
     search_form = SearchForm()
-    items = db.session.execute(db.select(Item)).scalars().all()
+    items = Item.query.paginate(page=page, per_page=10, error_out=False)
+    pages_numbers = items.iter_pages(left_edge=2, left_current=2, right_edge=2, right_current=2)
 
     if request.method == 'POST':
         searching_item = search_form.item.data
         return redirect(url_for('show_searching_items', searching_item=searching_item))
 
-    return render_template("index.html", items=items, search_form=search_form)
+    return render_template("index.html", items=items, pages=pages_numbers, current_page=page, search_form=search_form)
 
 
 @app.route('/categories')
