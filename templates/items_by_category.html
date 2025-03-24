@@ -24,5 +24,39 @@
         {% endfor %}
         {% endif %}
     </div>
+    {% if items.pages > 1 %}
+        <div class="container mt-4">
+            <nav aria-label="page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        {% if items.has_prev %}
+                        <a class="page-link selected-text-color" href="{{ url_for('show_category', category_id = category.id, page = items.prev_num) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                        {% else %}<span class="page-link disabled" aria-hidden="true">&laquo;</span>{% endif %}
+                    </li>
+                    {% for page in pages: %}
+                        <li class="page-item">
+                            <a class="page-link selected-text-color {% if page == current_page %} text-bg-warning {% endif %}"
+                               href="{{ url_for('show_category', category_id = category.id, page=page) }}">
+                                {% if page == None %}
+                                    ...
+                                {% else %}
+                                    {{ page }}
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    <li class="page-item btn-warning">
+                        {% if items.has_next %}
+                        <a class="page-link selected-text-color" href="{{ url_for('show_category', category_id = category.id, page = items.next_num) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                        {% else %}<span class="page-link disabled" aria-hidden="true">&raquo;</span>{% endif %}
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
 
 {% include "footer.html" %}

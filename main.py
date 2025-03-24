@@ -47,7 +47,11 @@ def home(page=1):
         searching_item = search_form.item.data
         return redirect(url_for('show_searching_items', searching_item=searching_item))
 
-    return render_template("index.html", items=items, pages=pages_numbers, current_page=page, search_form=search_form)
+    return render_template("index.html",
+                           items=items,
+                           pages=pages_numbers,
+                           current_page=page,
+                           search_form=search_form)
 
 
 @app.route('/categories')
@@ -59,13 +63,26 @@ def get_categories():
 
 @app.route('/categories/<int:category_id>')
 def show_category(category_id):
+    page = request.args.get('page')
+
+    if page:
+        try:
+            page = int(page)
+        except:
+            return render_template("errors/error.html")
+    else:
+        page = 1
+
     category = Category.query.filter_by(id=category_id).first()
 
-    items = category.items
+    items = Item.query.filter_by(category_id=category_id).paginate(page=page, per_page=1, error_out=False)
+    pages_numbers = items.iter_pages(left_edge=2, left_current=2, right_edge=2, right_current=2)
 
     return render_template("items_by_category.html",
                            category=category,
-                           items=items)
+                           items=items,
+                           pages=pages_numbers,
+                           current_page=page)
 
 
 @app.route('/contact')
