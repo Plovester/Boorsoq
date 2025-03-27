@@ -75,7 +75,7 @@ def show_category(category_id):
 
     category = Category.query.filter_by(id=category_id).first()
 
-    items = Item.query.filter_by(category_id=category_id).paginate(page=page, per_page=1, error_out=False)
+    items = Item.query.filter_by(category_id=category_id).paginate(page=page, per_page=10, error_out=False)
     pages_numbers = items.iter_pages(left_edge=2, left_current=2, right_edge=2, right_current=2)
 
     return render_template("items_by_category.html",
@@ -417,9 +417,24 @@ def confirm_order():
 @login_required
 @admin_only
 def admin_panel():
-    orders = db.session.execute(db.select(Order)).scalars().all()
+    page = request.args.get('page')
 
-    return render_template("admin_panel/admin_panel.html", orders=orders)
+    if page:
+        try:
+            page = int(page)
+        except:
+            return render_template("errors/error.html")
+    else:
+        page = 1
+
+    orders = Order.query.paginate(page=page, per_page=20, error_out=False)
+
+    pages_numbers = orders.iter_pages(left_edge=2, left_current=2, right_edge=2, right_current=2)
+
+    return render_template("admin_panel/admin_panel.html",
+                           orders=orders,
+                           pages=pages_numbers,
+                           current_page=page)
 
 
 @app.route('/admin/orders/<int:order_id>', methods=['PUT'])
