@@ -458,12 +458,26 @@ def change_order_details(order_id):
 @login_required
 @admin_only
 def admin_panel_products():
-    products = Item.query.filter_by(deleted_at=None)
+    page = request.args.get('page')
+
+    if page:
+        try:
+            page = int(page)
+        except:
+            return render_template("errors/error.html")
+    else:
+        page = 1
+
+    products = Item.query.paginate(page=page, per_page=20, error_out=False)
+    pages_numbers = products.iter_pages(left_edge=2, left_current=2, right_edge=2, right_current=2)
     categories = Category.query.filter_by(deleted_at=None)
 
     return render_template("admin_panel/admin_panel_products.html",
                            products=products,
-                           categories=categories)
+                           categories=categories,
+                           pages=pages_numbers,
+                           current_page=page
+                           )
 
 
 @app.route('/admin/products/add_item', methods=["GET", "POST"])
