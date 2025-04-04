@@ -23,6 +23,11 @@
                             {% endfor %}
                             </tbody>
                         </table>
+                        {% if customers.pages > 1 %}
+                            {% with items=customers, page=page, url='admin_panel_customers' %}
+                                {% include "pagination.html" %}
+                            {% endwith %}
+                        {% endif %}
                     </div>
                 </main>
 

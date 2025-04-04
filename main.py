@@ -1,13 +1,13 @@
 from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort, json
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import func, literal
+from sqlalchemy import func, literal, select
 from datetime import datetime, date
 from dateutil import parser
 from functools import wraps
 from app import login_manager, create_app
 from database import db
-from models import User, Role, Category, Item, OrderItem, Order
+from models import User, Role, Category, Item, OrderItem, Order, UserRoles
 from forms import SearchForm, RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
 
 app = create_app()
@@ -56,7 +56,7 @@ def home(page=1):
 
 @app.route('/categories')
 def get_categories():
-    categories = db.session.execute(db.select(Category)).scalars().all()
+    categories = db.session.execute(select(Category)).scalars().all()
 
     return render_template("categories.html", categories=categories)
 
@@ -614,20 +614,28 @@ def delete_category(category_id):
 @login_required
 @admin_only
 def admin_panel_customers():
-    users = db.session.execute(db.select(User)).scalars().all()
-    customers = []
-    for user in users:
-        for role in user.roles:
-            if role.name == "User":
-                customer = {
-                    'id': user.id,
-                    'name': user.name,
-                    'phone_number': user.phone_number,
-                    'email': user.email
-                }
-                customers.append(customer)
+    page = request.args.get('page')
 
-    return render_template("admin_panel/admin_panel_customers.html", customers=customers)
+    if page:
+        try:
+            page = int(page)
+        except:
+            return render_template("errors/error.html")
+    else:
+        page = 1
+
+    customers = (db.session.query(User)
+                 .join(UserRoles)
+                 .join(Role)
+                 .filter(Role.name == "User")
+                 .paginate(page=page, per_page=10, error_out=False))
+
+    pages_numbers = customers.iter_pages(left_edge=2, left_current=2, right_edge=2, right_current=2)
+
+    return render_template("admin_panel/admin_panel_customers.html",
+                           customers=customers,
+                           pages=pages_numbers,
+                           current_page=page)
 
 
 @app.route('/admin/reports')
