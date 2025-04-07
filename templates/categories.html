@@ -4,7 +4,7 @@
         {% if categories %}
         {% for category in categories %}
         {% if not category.deleted_at %}
-            <a href="{{ url_for('show_category', category_id=category.id) }}" class="d-flex w-100">
+            <a href="{{ url_for('show_category', id=category.id) }}" class="d-flex w-100">
                 <div class="card main-text-color bg-white w-100 m-2 p-0">
                     <img
                         {% if category.image_url %}

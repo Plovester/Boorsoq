@@ -61,8 +61,8 @@ def get_categories():
     return render_template("categories.html", categories=categories)
 
 
-@app.route('/categories/<int:category_id>')
-def show_category(category_id):
+@app.route('/categories/<int:id>')
+def show_category(id):
     page = request.args.get('page')
 
     if page:
@@ -73,9 +73,9 @@ def show_category(category_id):
     else:
         page = 1
 
-    category = Category.query.filter_by(id=category_id).first()
+    category = Category.query.filter_by(id=id).first()
 
-    items = Item.query.filter_by(category_id=category_id).paginate(page=page, per_page=10, error_out=False)
+    items = Item.query.filter_by(category_id=id).paginate(page=page, per_page=10, error_out=False)
     pages_numbers = items.iter_pages(left_edge=2, left_current=2, right_edge=2, right_current=2)
 
     return render_template("items_by_category.html",
