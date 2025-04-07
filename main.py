@@ -215,14 +215,30 @@ def edit_user_password(user_id):
     return "Success", 204
 
 
-@app.route('/orders_history/<int:user_id>')
+@app.route('/orders_history')
 @login_required
-def orders_history(user_id):
-    user_orders = db.session.execute(db.select(Order).where(Order.user_id == user_id)).scalars().all()
+def orders_history():
+    page = request.args.get('page')
 
-    reversed_orders_list = reversed(user_orders)
+    if page:
+        try:
+            page = int(page)
+        except:
+            return render_template("errors/error.html")
+    else:
+        page = 1
 
-    return render_template("user_orders_history.html", orders=reversed_orders_list)
+    user_orders = (db.session.query(Order)
+                   .filter(Order.user_id == current_user.id)
+                   .order_by(Order.id.desc())
+                   .paginate(page=page, per_page=20, error_out=False))
+
+    pages_numbers = user_orders.iter_pages(left_edge=2, left_current=2, right_edge=2, right_current=2)
+
+    return render_template("user_orders_history.html",
+                           pages=pages_numbers,
+                           orders=user_orders,
+                           current_page=page)
 
 
 @app.route('/basket', methods=["GET", "POST"])

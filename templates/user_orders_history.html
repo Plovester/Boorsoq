@@ -27,6 +27,11 @@
                 {% endfor %}
                 </tbody>
             </table>
+            {% if orders.pages > 1 %}
+                {% with items=orders, page=page, url='orders_history' %}
+                    {% include "pagination.html" %}
+                {% endwith %}
+            {% endif %}
         </div>
 </div>
 
