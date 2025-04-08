@@ -90,7 +90,7 @@ def contacts_page():
     return render_template("contacts.html")
 
 
-@app.route('/search/')
+@app.route('/search')
 def show_searching_items():
     searching_item = request.args['searching_item']
     result = Item.query.filter(Item.name.ilike('%%' + literal(searching_item) + '%%')).all()
@@ -182,13 +182,14 @@ def user_settings():
     return render_template("user_settings.html")
 
 
-@app.route('/user_settings/<int:user_id>', methods=['PUT'])
+@app.route('/user_info', methods=['PUT'])
 @login_required
-def edit_user_info(user_id):
+def edit_user_info():
     parameter = request.get_json()
-    db.session.query(User).filter(User.id == user_id).update(parameter, synchronize_session=False)
+    db.session.query(User).filter(User.id == current_user.id).update(parameter, synchronize_session=False)
     db.session.commit()
-    user = User.query.filter_by(id=user_id).first()
+
+    user = User.query.filter_by(id=current_user.id).first()
     user_info = {
         'name': user.name,
         'email': user.email,
@@ -197,17 +198,17 @@ def edit_user_info(user_id):
     return jsonify(user_info)
 
 
-@app.route('/user_settings/<int:user_id>/password', methods=['PUT'])
+@app.route('/user_settings/password', methods=['PUT'])
 @login_required
-def edit_user_password(user_id):
+def edit_user_password():
     user_password_info = request.get_json()
-    user = User.query.filter_by(id=user_id).first()
+    user = User.query.filter_by(id=current_user.id).first()
 
     is_password_correct = check_password_hash(user.password, user_password_info['old_password'])
 
     if is_password_correct:
         new_password = generate_password_hash(user_password_info['new_password'], method='pbkdf2:sha256', salt_length=8)
-        db.session.query(User).filter(User.id == user_id).update({'password': new_password}, synchronize_session=False)
+        db.session.query(User).filter(User.id == current_user.id).update({'password': new_password}, synchronize_session=False)
         db.session.commit()
     else:
         print('Error')

@@ -146,10 +146,10 @@ function createOrder() {
         })
 }
 
-function editUserName(id) {
+function editUserName() {
     const name = document.getElementById('name').value
 
-    let response = fetch(`/user_settings/${id}`, {
+    let response = fetch('/user_info', {
             method: 'PUT',
             mode: 'cors',
             headers: {
@@ -170,14 +170,13 @@ function editUserName(id) {
 
             let user_name_in_settings = document.getElementById("current-user-name")
             user_name_in_settings.innerHTML = data.name
-
         })
 }
 
-function editUserEmail(id) {
+function editUserEmail() {
     const email = document.getElementById('email').value
 
-    let response = fetch(`/user_settings/${id}`, {
+    let response = fetch('/user_info', {
             method: 'PUT',
             mode: 'cors',
             headers: {
@@ -198,10 +197,10 @@ function editUserEmail(id) {
         })
 }
 
-function editUserPhone(id) {
+function editUserPhone() {
     const phone = document.getElementById('phone').value
 
-    let response = fetch(`/user_settings/${id}`, {
+    let response = fetch('/user_info', {
             method: 'PUT',
             mode: 'cors',
             headers: {
@@ -222,7 +221,7 @@ function editUserPhone(id) {
         })
 }
 
-function editUserPassword(id) {
+function editUserPassword() {
     const old_password = document.getElementById('old-password').value
     const new_password = document.getElementById('new-password').value
     const confirmed_password = document.getElementById('confirmed-password').value
@@ -233,7 +232,7 @@ function editUserPassword(id) {
                         new_password: new_password
                     }
 
-        let response = fetch(`/user_settings/${id}/password`, {
+        let response = fetch('/user_settings/password', {
             method: 'PUT',
             mode: 'cors',
             headers: {
