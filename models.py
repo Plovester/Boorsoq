@@ -11,7 +11,10 @@ class User(db.Model, UserMixin):
     phone_number = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    roles = db.relationship("Role", secondary="user_roles")
+    registered_on = db.Column(db.DateTime, nullable=False)
+    confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    confirmed_on = db.Column(db.DateTime, nullable=True)
+    roles = db.relationship("Role", secondary="user_roles", back_populates="users")
     orders = relationship("Order", back_populates="user")
 
 
@@ -19,7 +22,7 @@ class Role(db.Model):
     __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True)
-    users = db.relationship("User", secondary="user_roles")
+    users = db.relationship("User", secondary="user_roles", back_populates="roles")
 
 
 class UserRoles(db.Model):
