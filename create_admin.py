@@ -1,6 +1,7 @@
 from werkzeug.security import generate_password_hash
 from models import Role, User
 from database import db
+import datetime
 
 
 def create_admin():
@@ -13,7 +14,10 @@ def create_admin():
             name='admin',
             phone_number='111111',
             email='admin',
-            password=hashed_password
+            password=hashed_password,
+            registered_on=datetime.datetime.now(),
+            confirmed=True,
+            confirmed_on=datetime.datetime.now()
         )
 
         first_admin.roles.append(admin_role)
