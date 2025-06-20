@@ -23,4 +23,19 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
+    app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECURITY_PASSWORD_SALT')
+
+    app.config.update(dict(
+        DEBUG=True,
+        MAIL_SERVER='smtp.gmail.com',
+        MAIL_PORT=587,
+        MAIL_USE_TLS=True,
+        MAIL_USE_SSL=False,
+        MAIL_USERNAME=os.environ.get('EMAIL'),
+        MAIL_PASSWORD=os.environ.get('EMAIL_PASSWORD'),
+    ))
+
     return app
+
+
+

@@ -13,7 +13,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(100), nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
-    confirmed_on = db.Column(db.DateTime, nullable=False)
+    confirmed_on = db.Column(db.DateTime, nullable=True)
     roles = db.relationship("Role", secondary="user_roles", back_populates="users")
     orders = relationship("Order", back_populates="user")
 

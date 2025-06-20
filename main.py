@@ -1,5 +1,6 @@
 from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort, json
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import func, literal, select
 from datetime import datetime, date
@@ -9,8 +10,10 @@ from app import login_manager, create_app
 from database import db
 from models import User, Role, Category, Item, OrderItem, Order, UserRoles
 from forms import SearchForm, RegisterForm, LoginForm, AddNewItemForm, AddNewCategoryForm
+from create_token import generate_token, confirm_token
 
 app = create_app()
+mail = Mail(app)
 
 
 def admin_only(function):
@@ -114,7 +117,8 @@ def register():
                         name=register_form.name.data,
                         phone_number=register_form.phone_number.data,
                         email=register_form.email.data,
-                        password=hashed_password
+                        password=hashed_password,
+                        registered_on=datetime.now()
                     )
 
                     new_user.roles.append(user_role)
@@ -122,13 +126,53 @@ def register():
                     db.session.add(new_user)
                     db.session.commit()
 
+                    token = generate_token(app, register_form.email.data)
+                    confirm_url = url_for('confirm_email', token=token, _external=True)
+                    html = render_template("confirm_email.html", confirm_url=confirm_url)
+                    subject = "Please confirm your email"
+
+                    msg = Message(
+                        subject,
+                        recipients=[new_user.email],
+                        html=html,
+                        sender="noreply@boorsoq.com"
+                    )
+
+                    mail.send(msg)
+
                     login_user(new_user)
+
+                    flash("A confirmation email has been sent via email", "success")
 
                     return redirect(url_for('home'))
             else:
                 flash('The email has already exist. Try to log in')
                 return redirect(url_for('login'))
+
         return render_template("register.html", register_form=register_form)
+
+
+@app.route('/confirm/<token>')
+@login_required
+def confirm_email(token):
+    if current_user.confirmed:
+        flash("Account already confirmed.", "success")
+        return redirect(url_for('home'))
+
+    email = confirm_token(app, token)
+    user = User.query.filter_by(email=current_user.email).first()
+
+    if user.email == email:
+        user.confirmed = True
+        user.confirmed_on = datetime.now()
+
+        db.session.add(user)
+        db.session.commit()
+
+        flash("You have confirmed your account. Thanks!", "success")
+    else:
+        flash("The confirmation link is invalid or has expired.", "danger")
+    return redirect(url_for('home'))
 
 
 @app.route('/login', methods=["GET", "POST"])
