@@ -33,6 +33,17 @@ def admin_only(function):
     return check_credentials
 
 
+def check_if_confirmed(function):
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        if current_user.confirmed is False:
+            flash("Please confirm your account!", "warning")
+            return redirect(url_for("inactive"))
+        return function(*args, **kwargs)
+
+    return decorated_function
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.get_or_404(User, user_id)
@@ -248,18 +259,21 @@ def logout():
 
 @app.route('/user_profile')
 @login_required
+@check_if_confirmed
 def show_user_account():
     return render_template("user_profile.html")
 
 
 @app.route('/user_settings')
 @login_required
+@check_if_confirmed
 def user_settings():
     return render_template("user_settings.html")
 
 
 @app.route('/user_info', methods=['PUT'])
 @login_required
+@check_if_confirmed
 def edit_user_info():
     parameter = request.get_json()
     db.session.query(User).filter(User.id == current_user.id).update(parameter, synchronize_session=False)
@@ -276,6 +290,7 @@ def edit_user_info():
 
 @app.route('/user_settings/password', methods=['PUT'])
 @login_required
+@check_if_confirmed
 def edit_user_password():
     user_password_info = request.get_json()
     user = User.query.filter_by(id=current_user.id).first()
@@ -294,6 +309,7 @@ def edit_user_password():
 
 @app.route('/orders_history')
 @login_required
+@check_if_confirmed
 def orders_history():
     page = request.args.get('page')
 
@@ -320,6 +336,7 @@ def orders_history():
 
 @app.route('/basket', methods=["GET", "POST"])
 @login_required
+@check_if_confirmed
 def show_basket():
     if session.get('cart'):
         cart = session['cart']
@@ -351,6 +368,7 @@ def show_basket():
 
 @app.route('/cart/add_item', methods=['POST'])
 @login_required
+@check_if_confirmed
 def add_item_to_cart():
     item_data = request.get_json()
 
@@ -374,6 +392,7 @@ def add_item_to_cart():
 
 @app.route('/cart/adjust_item_qty', methods=['PUT'])
 @login_required
+@check_if_confirmed
 def adjust_item_qty():
     qty_data = request.get_json()
 
@@ -399,6 +418,7 @@ def adjust_item_qty():
 
 @app.route('/cart/remove_item', methods=['DELETE'])
 @login_required
+@check_if_confirmed
 def remove_item():
     item_id = request.get_json()
 
@@ -419,6 +439,7 @@ def remove_item():
 
 @app.route('/checkout', methods=["GET", "POST"])
 @login_required
+@check_if_confirmed
 def checkout():
     cart = session['cart']
     total_price = session['total_price_cart']
@@ -464,6 +485,7 @@ def checkout():
 
 @app.route('/confirm_order', methods=["POST"])
 @login_required
+@check_if_confirmed
 def confirm_order():
     ready_by_date = request.get_json()
 
