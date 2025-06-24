@@ -144,7 +144,7 @@ def register():
 
                     flash("A confirmation email has been sent via email", "success")
 
-                    return redirect(url_for('home'))
+                    return redirect(url_for('inactive'))
             else:
                 flash('The email has already exist. Try to log in')
                 return redirect(url_for('login'))
@@ -173,6 +173,38 @@ def confirm_email(token):
     else:
         flash("The confirmation link is invalid or has expired.", "danger")
     return redirect(url_for('home'))
+
+
+@app.route('/inactive')
+@login_required
+def inactive():
+    if current_user.confirmed:
+        return redirect(url_for('home'))
+    return render_template('inactive.html')
+
+
+@app.route('/resend')
+@login_required
+def resend_confirmation():
+    if current_user.confirmed:
+        flash("Your account has already been confirmed", "success")
+        return redirect(url_for('home'))
+    token = generate_token(app, current_user.email)
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    html = render_template("confirm_email.html", confirm_url=confirm_url)
+    subject = "Please confirm your email"
+
+    msg = Message(
+        subject,
+        recipients=[current_user.email],
+        html=html,
+        sender="noreply@boorsoq.com"
+    )
+
+    mail.send(msg)
+
+    flash("A new confirmation email has been sent", "success")
+    return redirect(url_for('inactive'))
 
 
 @app.route('/login', methods=["GET", "POST"])
