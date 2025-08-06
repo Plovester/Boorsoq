@@ -28,12 +28,25 @@ function addItemToCart(item_id) {
         .then(response => {
             if (response.ok) {
                 return response.json()
-            } else {
-                throw new Error('Request failed');
             }
+
+            return Promise.reject(response)
         })
         .then(data => {
             changeQtyLabel(data.result)
+        })
+        .catch(response => {
+            if(response.status == 400) {
+                error = response.json()
+
+                error.then(function(result) {
+                    let popup_elem = document.getElementById('error-' + item_id)
+                    popup_elem.innerHTML = result.message
+                    popup_elem.classList.toggle("popup-error-show")
+
+                    setTimeout(() => {popup_elem.classList.toggle("popup-error-show")}, 4000)
+                });
+            }
         })
 }
 
@@ -75,9 +88,9 @@ function updateQty(item_id, updated_qty, qty_input) {
         .then(response => {
             if (response.ok) {
                 return response.json()
-            } else {
-                throw new Error('Request failed');
             }
+
+            return Promise.reject(response)
         })
         .then(data => {
             qty_input.value = data.result_item['item_qty']
@@ -92,6 +105,22 @@ function updateQty(item_id, updated_qty, qty_input) {
 
             let total_price_cell = document.getElementById('total_price')
             total_price_cell.innerHTML = `<strong>£${(data.result_total_price / 100).toFixed(1)}</strong>`
+        })
+        .catch(response => {
+            if(response.status == 400) {
+                error = response.json()
+
+                error.then(function(result) {
+                    const popup_elem = document.getElementById('error-' + item_id)
+                    popup_elem.innerHTML = result.message
+                    popup_elem.classList.toggle("popup-error-show")
+
+                    const qty_input = document.getElementById(item_id + '-qty')
+                    qty_input.value = result.qty
+
+                    setTimeout(() => {popup_elem.classList.toggle("popup-error-show")}, 4000)
+                });
+            }
         })
 }
 

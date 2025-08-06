@@ -379,7 +379,15 @@ def add_item_to_cart():
         if item_index is None:
             cart.append(item_data)
         else:
-            cart[item_index]["item_qty"] += 1
+            if cart[item_index]["item_qty"] < 10:
+                cart[item_index]["item_qty"] += 1
+            else:
+                response = jsonify({'error': 'ItemQuantityError',
+                                    'message': 'Sorry, you have reached the maximum quantity of this product'})
+                response.status_code = 400
+
+                return response
+
         session['cart'] = cart
     else:
         session['cart'] = [item_data]
@@ -396,24 +404,32 @@ def add_item_to_cart():
 def adjust_item_qty():
     qty_data = request.get_json()
 
-    cart = session['cart']
-    item = next((item for item in cart if item["item_id"] == qty_data['item_id']), None)
-    item["item_qty"] = qty_data["item_qty"]
-    session['cart'] = cart
+    if qty_data["item_qty"] > 10:
+        response = jsonify({'error': 'ItemQuantityError',
+                            'message': 'Sorry, you have reached the maximum quantity of this product',
+                            'qty': 10})
+        response.status_code = 400
 
-    item_price = Item.query.get(item["item_id"]).price
-    item_total_price = item_price * item["item_qty"]
+        return response
+    else:
+        cart = session['cart']
+        item = next((item for item in cart if item["item_id"] == qty_data['item_id']), None)
+        item["item_qty"] = qty_data["item_qty"]
+        session['cart'] = cart
 
-    total_qty = sum(item["item_qty"] for item in session['cart'])
-    session['total_qty_cart'] = total_qty
+        item_price = Item.query.get(item["item_id"]).price
+        item_total_price = item_price * item["item_qty"]
 
-    total_price = sum((Item.query.get(item["item_id"]).price * item["item_qty"]) for item in session['cart'])
-    session['total_price_cart'] = total_price
+        total_qty = sum(item["item_qty"] for item in session['cart'])
+        session['total_qty_cart'] = total_qty
 
-    return jsonify(result_item=item,
-                   result_item_total_price=item_total_price,
-                   result_total_qty=session['total_qty_cart'],
-                   result_total_price=session['total_price_cart'])
+        total_price = sum((Item.query.get(item["item_id"]).price * item["item_qty"]) for item in session['cart'])
+        session['total_price_cart'] = total_price
+
+        return jsonify(result_item=item,
+                       result_item_total_price=item_total_price,
+                       result_total_qty=session['total_qty_cart'],
+                       result_total_price=session['total_price_cart'])
 
 
 @app.route('/cart/remove_item', methods=['DELETE'])

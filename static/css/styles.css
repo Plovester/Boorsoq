@@ -97,3 +97,53 @@ input {
   background-color: red !important;
   border-color: #ffc107 !important;
 }
+
+.popup-error-trigger {
+    position: relative;
+}
+
+.popup-error {
+    visibility: hidden;
+    position: absolute;
+    width: 220px;
+    background-color: #FF7A00;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 3px;
+    z-index: 100;
+    bottom: 90%;
+}
+
+.popup-error::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #FF7A00 transparent transparent transparent;
+}
+
+.popup-error-main-page {
+    bottom: 20%;
+    left: 12%;
+}
+
+.popup-error-show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s
+}
+
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
