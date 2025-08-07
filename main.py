@@ -1,3 +1,5 @@
+import time
+
 from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort, json
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
@@ -158,6 +160,7 @@ def register():
                     return redirect(url_for('inactive'))
             else:
                 flash('The email has already exist. Try to log in')
+
                 return redirect(url_for('login'))
 
         return render_template("register.html", register_form=register_form)
@@ -200,6 +203,7 @@ def resend_confirmation():
     if current_user.confirmed:
         flash("Your account has already been confirmed", "success")
         return redirect(url_for('home'))
+
     token = generate_token(app, current_user.email)
     confirm_url = url_for('confirm_email', token=token, _external=True)
     html = render_template("confirm_email.html", confirm_url=confirm_url)
@@ -241,11 +245,9 @@ def login():
                             elif role.name == "User":
                                 return redirect(url_for('home'))
                     else:
-                        flash('Your password is not correct. Try again')
-                        return redirect(url_for('login'))
+                        flash("Your password is not correct. Try again", "danger")
                 else:
-                    flash('The email does not exist. Try again or register')
-                    return redirect(url_for('login'))
+                    flash("The email does not exist. Try again or register", "danger")
 
     return render_template("login.html", login_form=login_form)
 
@@ -536,6 +538,8 @@ def confirm_order():
 
         db.session.add(new_order_item)
         db.session.commit()
+
+
 
     session['cart'] = []
     session['total_price_cart'] = 0

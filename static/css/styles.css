@@ -147,3 +147,8 @@ input {
   from {opacity: 0;}
   to {opacity:1 ;}
 }
+
+.danger {
+    color: red;
+    list-style-type: none;
+}
