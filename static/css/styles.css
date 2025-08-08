@@ -152,3 +152,8 @@ input {
     color: red;
     list-style-type: none;
 }
+
+.success {
+    color: green;
+    list-style-type: none;
+}

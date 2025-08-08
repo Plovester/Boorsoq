@@ -1,5 +1,3 @@
-import time
-
 from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort, json
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
@@ -39,7 +37,8 @@ def check_if_confirmed(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         if current_user.confirmed is False:
-            flash("Please confirm your account!", "warning")
+            flash("Please confirm your account!", "danger")
+
             return redirect(url_for("inactive"))
         return function(*args, **kwargs)
 
@@ -159,7 +158,7 @@ def register():
 
                     return redirect(url_for('inactive'))
             else:
-                flash('The email has already exist. Try to log in')
+                flash("The email has already exist. Try to log in", "danger")
 
                 return redirect(url_for('login'))
 
@@ -171,6 +170,7 @@ def register():
 def confirm_email(token):
     if current_user.confirmed:
         flash("Account already confirmed.", "success")
+
         return redirect(url_for('home'))
 
     email = confirm_token(app, token)
@@ -186,6 +186,7 @@ def confirm_email(token):
         flash("You have confirmed your account. Thanks!", "success")
     else:
         flash("The confirmation link is invalid or has expired.", "danger")
+
     return redirect(url_for('home'))
 
 
@@ -239,11 +240,16 @@ def login():
                     if is_password_correct:
                         login_user(user)
 
-                        for role in current_user.roles:
-                            if role.name == "Admin":
-                                return redirect(url_for('admin_panel'))
-                            elif role.name == "User":
-                                return redirect(url_for('home'))
+                        if user.confirmed:
+                            for role in current_user.roles:
+                                if role.name == "Admin":
+                                    return redirect(url_for('admin_panel'))
+                                elif role.name == "User":
+                                    return redirect(url_for('home'))
+                        else:
+                            flash("You haven't confirmed your account yet", "danger")
+
+                            return redirect(url_for('inactive'))
                     else:
                         flash("Your password is not correct. Try again", "danger")
                 else:
