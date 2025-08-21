@@ -531,6 +531,8 @@ def confirm_order():
     db.session.add(new_order)
     db.session.commit()
 
+    new_order_items = []
+
     for item in cart:
         db_item = Item.query.get(item["item_id"])
 
@@ -542,10 +544,26 @@ def confirm_order():
             order_id=new_order.id
         )
 
-        db.session.add(new_order_item)
-        db.session.commit()
+        new_order_items.append(new_order_item)
 
+    db.session.add_all(new_order_items)
+    db.session.commit()
 
+    html = render_template("confirm_order.html",
+                           user=current_user,
+                           order_info=new_order,
+                           order_items=new_order_items,
+                           current_year=datetime.now().year
+                           )
+
+    msg = Message(
+        subject="Thanks for your order!",
+        recipients=[current_user.email],
+        html=html,
+        sender="noreply@boorsoq.com"
+    )
+
+    mail.send(msg)
 
     session['cart'] = []
     session['total_price_cart'] = 0
